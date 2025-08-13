@@ -34,13 +34,11 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.util;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Parent;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 /**
  * AbstractPanelController is the abstract base class for all the panel 
@@ -61,10 +59,9 @@ import javafx.scene.Parent;
  * 
  * 
  */
+@Slf4j
 public abstract class AbstractPanelController {
-    
-    private static final Logger LOG = Logger.getLogger(AbstractPanelController.class.getName());
-    
+
     private final EditorController editorController;
     private Parent panelRoot;
     
@@ -89,7 +86,7 @@ public abstract class AbstractPanelController {
             try {
                 fxomDocumentDidChange(od);
             } catch(RuntimeException x) {
-                LOG.log(Level.SEVERE, "Bug", x); //NOI18N
+                log.error("Bug", x); //NOI18N
             }
             if (nd != null) {
                 nd.sceneGraphRevisionProperty().addListener(fxomDocumentRevisionListener);
@@ -204,7 +201,7 @@ public abstract class AbstractPanelController {
         try {
             sceneGraphRevisionDidChange();
         } catch(RuntimeException x) {
-            LOG.log(Level.SEVERE, "Bug", x); //NOI18N
+            log.error("Bug", x); //NOI18N
         }
     };
     
@@ -213,7 +210,7 @@ public abstract class AbstractPanelController {
         try {
             cssRevisionDidChange();
         } catch(RuntimeException x) {
-            LOG.log(Level.SEVERE, "Bug", x); //NOI18N
+            log.error("Bug", x); //NOI18N
         }
     };
     
@@ -222,7 +219,7 @@ public abstract class AbstractPanelController {
         try {
             jobManagerRevisionDidChange();
         } catch(RuntimeException x) {
-            LOG.log(Level.SEVERE, "Bug", x); //NOI18N
+            log.error("Bug", x); //NOI18N
         }
     };
     
@@ -231,7 +228,7 @@ public abstract class AbstractPanelController {
         try {
             editorSelectionDidChange();
         } catch(RuntimeException x) {
-            LOG.log(Level.SEVERE, "Bug", x); //NOI18N
+            log.error("Bug", x); //NOI18N
         }
     };
     

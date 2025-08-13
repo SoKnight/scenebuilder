@@ -33,11 +33,15 @@
 package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.gluonhq.scenebuilder.plugins.editor.GluonEditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController.DISPLAY_MODE;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
+import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -45,15 +49,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordGlobalBase;
+
 import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.*;
 
 /**
  * Defines preferences global to the SB application.
  */
+@Slf4j
 public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
 
     /***************************************************************************
@@ -259,7 +261,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
             fxmlFile = new File(url.toURI());
             return containsRecentItem(fxmlFile);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(PreferencesRecordGlobal.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
             return false;
         }
     }
@@ -276,7 +278,7 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
             fxmlFile = new File(url.toURI());
             addRecentItem(fxmlFile);
         } catch (URISyntaxException ex) {
-            Logger.getLogger(PreferencesRecordGlobal.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
     }
 

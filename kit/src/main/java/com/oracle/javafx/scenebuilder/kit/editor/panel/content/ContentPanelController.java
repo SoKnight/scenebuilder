@@ -32,88 +32,10 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.content;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.collections.ListChangeListener;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableView;
-import javafx.scene.image.Image;
-import javafx.scene.input.InputEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.TextFlow;
-import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Transform;
-import javafx.stage.Window;
-
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.SceneDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.WindowDriver;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.AbstractDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.BorderPaneDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.CubicCurveDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.FlowPaneDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.GenericDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.GridPaneDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.HBoxDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.LineDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.PolygonDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.PolylineDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.QuadCurveDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.SplitPaneDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TabDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TabPaneDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TableColumnDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TableViewDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TextFlowDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.ToolBarDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TreeTableColumnDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.TreeTableViewDriver;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.VBoxDriver;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.*;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.handles.AbstractHandles;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.outline.NodeOutline;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.mode.AbstractModeController;
@@ -129,17 +51,41 @@ import com.oracle.javafx.scenebuilder.kit.editor.util.ContextMenuController;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
+import javafx.collections.ListChangeListener;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.SubScene;
-import javafx.scene.shape.CubicCurve;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Polyline;
-import javafx.scene.shape.QuadCurve;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.*;
+import javafx.scene.text.TextFlow;
+import javafx.scene.transform.NonInvertibleTransformException;
+import javafx.scene.transform.Transform;
+import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.net.URL;
+import java.util.*;
 
 /**
  * This class creates and controls the <b>Content Panel</b> of Scene Builder Kit.
  * 
  */
+@Slf4j
 public class ContentPanelController extends AbstractFxmlPanelController 
                                     implements FXOMDocument.SceneGraphHolder {
     
@@ -1051,7 +997,7 @@ public class ContentPanelController extends AbstractFxmlPanelController
             sb.append(ke.getCode());
         }
 
-        Logger.getLogger(getClass().getName()).log(Level.INFO, sb.toString());
+        log.info(sb.toString());
     }
     
     private final EventHandler<Event> eventTracingFilter

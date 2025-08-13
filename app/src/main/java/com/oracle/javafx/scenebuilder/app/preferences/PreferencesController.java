@@ -34,17 +34,17 @@ package com.oracle.javafx.scenebuilder.app.preferences;
 
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
  * Defines preferences for Scene Builder App.
  */
+@Slf4j
 public class PreferencesController extends PreferencesControllerBase {
 
     /***************************************************************************
@@ -126,7 +126,7 @@ public class PreferencesController extends PreferencesControllerBase {
                     }
                 }
             } catch (BackingStoreException ex) {
-                Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex.getMessage(), ex);
             }
         }
 
@@ -175,7 +175,7 @@ public class PreferencesController extends PreferencesControllerBase {
                 prd.resetDocumentPreferences();
             }
         } catch (BackingStoreException ex) {
-            Logger.getLogger(PreferencesController.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
     }
 

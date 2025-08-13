@@ -32,6 +32,8 @@
  */
 package com.oracle.javafx.scenebuilder.app.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -43,8 +45,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class implements an simple IPC.
@@ -62,6 +62,7 @@ import java.util.logging.Logger;
  * 
  * @param <T> 
  */
+@Slf4j
 public class MessageBox<T extends Serializable> {
     
     public static final long NAP_TIME = 100; // ms
@@ -126,7 +127,7 @@ public class MessageBox<T extends Serializable> {
             boxMutex.unlock();
         } catch(IOException e) {
             // Strange
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to unlock message box mutex: ", e);
+            log.warn("Failed to unlock message box mutex", e);
         }
     }
     

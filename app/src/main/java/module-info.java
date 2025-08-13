@@ -31,13 +31,15 @@
  */
 
 module com.gluonhq.scenebuilder.app {
+    requires static lombok;
+
+    requires ch.qos.logback.classic;
     requires javafx.web;
     requires javafx.fxml;
     requires javafx.media;
     requires javafx.swing;
     requires transitive com.gluonhq.scenebuilder.kit;
     requires transitive com.gluonhq.scenebuilder.gluon.plugin;
-    requires java.logging;
     requires java.prefs;
     requires jakarta.json;
     requires org.apache.maven.resolver;
@@ -45,6 +47,7 @@ module com.gluonhq.scenebuilder.app {
     requires org.apache.maven.resolver.impl;
     requires org.apache.maven.resolver.supplier;
     requires org.apache.maven.resolver.util;
+    requires org.slf4j;
 
     opens com.oracle.javafx.scenebuilder.app to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.about to javafx.fxml;
@@ -54,7 +57,6 @@ module com.gluonhq.scenebuilder.app {
     opens com.oracle.javafx.scenebuilder.app.preferences to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.registration to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.report to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.tracking to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.util to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.welcomedialog;
 

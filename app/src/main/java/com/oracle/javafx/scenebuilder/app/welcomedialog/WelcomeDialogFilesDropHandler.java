@@ -32,17 +32,16 @@
 
 package com.oracle.javafx.scenebuilder.app.welcomedialog;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 final class WelcomeDialogFilesDropHandler {
-
-    private static final Logger LOGGER = Logger.getLogger(WelcomeDialogFilesDropHandler.class.getName());
 
     private final List<File> droppedFiles;
     private final List<String> toOpen;
@@ -106,17 +105,17 @@ final class WelcomeDialogFilesDropHandler {
         }
         
         if (!toOpen.isEmpty()) {
-            LOGGER.log(Level.INFO, "Received drop event to open files...");
+            log.info("Received drop event to open files...");
             openFiles.accept(toOpen);
         } else {
-            LOGGER.log(Level.INFO, "Dropped object does not contain any loadable FXML files.");
+            log.info("Dropped object does not contain any loadable FXML files.");
             handleUnsupported.accept(unsupportedItems);
         }
         
         if (!unsupportedItems.isEmpty()) {
-            LOGGER.log(Level.WARNING, "{0} unsupported items dropped.", unsupportedItems.size());
+            log.warn("{} unsupported items dropped.", unsupportedItems.size());
             for (var unsupportedItem : unsupportedItems) {
-                LOGGER.log(Level.INFO, "Unsupported file or empty directory: {0}", unsupportedItem);
+                log.info("Unsupported file or empty directory: {}", unsupportedItem);
             }
         }
     }

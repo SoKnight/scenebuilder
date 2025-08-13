@@ -34,10 +34,6 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.css;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.css.CssMetaData;
 import javafx.css.Styleable;
 import javafx.css.StyleableProperty;
@@ -49,12 +45,16 @@ import javafx.scene.control.PopupControl;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.Set;
 
 /**
  * CSS support for Scene Builder.
  *
  * @treatAsPrivate
  */
+@Slf4j
 public class CssUtils {
 
     private CssUtils() {
@@ -159,7 +159,7 @@ public class CssUtils {
             final StyleableProperty<Object> val = raw.getStyleableProperty(node);
             property = CssInternal.getBeanPropertyName(val);
         } catch (RuntimeException e) {
-            Logger.getLogger(CssUtils.class.getName()).log(Level.WARNING, "Failed to retrieve property: ", e);
+            log.warn("Failed to retrieve property", e);
         }
         return property;
     }

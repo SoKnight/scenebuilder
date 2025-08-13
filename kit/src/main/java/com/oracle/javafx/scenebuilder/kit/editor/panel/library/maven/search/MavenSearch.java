@@ -32,6 +32,13 @@
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.aether.artifact.DefaultArtifact;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
@@ -41,15 +48,9 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import org.eclipse.aether.artifact.DefaultArtifact;
 
+@Slf4j
 public class MavenSearch implements Search {
 
     // maven
@@ -92,7 +93,7 @@ public class MavenSearch implements Search {
                 }
             }
         } catch (InterruptedException | IOException ex) {
-            Logger.getLogger(MavenSearch.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
         return null;
     }

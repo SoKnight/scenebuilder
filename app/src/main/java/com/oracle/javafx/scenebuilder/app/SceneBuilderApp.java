@@ -41,7 +41,6 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
 import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
-import com.oracle.javafx.scenebuilder.app.tracking.Tracking;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.app.welcomedialog.WelcomeDialogWindowController;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
@@ -73,6 +72,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,16 +92,12 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
 
 /**
  * This is the SB main entry point.
  */
+@Slf4j
 public class SceneBuilderApp extends Application implements AppPlatform.AppNotificationHandler {
-
-    private static final Logger LOGGER = Logger.getLogger(SceneBuilderApp.class.getName());
 
     public enum ApplicationControlAction {
         ABOUT,
@@ -126,15 +122,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     private final ObservableList<Runnable> startupTasks = FXCollections.observableArrayList();
     private final BooleanBinding startupTasksFinished = Bindings.isEmpty(startupTasks);
-
-    static {
-        try {
-            // Ensures logging.properties is applied, whether running application locally or via a JAR
-            LogManager.getLogManager().readConfiguration(SceneBuilderApp.class.getResourceAsStream("/logging.properties"));
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to initialise log manager", e);
-        }
-    }
 
     /*
      * Public
@@ -402,7 +389,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                             try {
                                 latch.await();
                             } catch (InterruptedException e) {
-                                Logger.getLogger(getClass().getName()).log(Level.SEVERE, "An exception was thrown:", e);
+                                log.error("An exception was thrown", e);
                             }
                         }
 
@@ -460,40 +447,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         userLibrary.explorationCountProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> userLibraryExplorationCountDidChange());
 
         userLibrary.startWatching();
-
-        sendTrackingStartupInfo();
-    }
-
-    private void sendTrackingStartupInfo() {
-        PreferencesController pc = PreferencesController.getSingleton();
-        PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-
-        boolean sendTrackingInfo = shouldSendTrackingInfo(recordGlobal);
-
-        if (sendTrackingInfo) {
-            boolean update = false;
-            String hash = recordGlobal.getRegistrationHash();
-            String email = recordGlobal.getRegistrationEmail();
-            boolean optIn = recordGlobal.isRegistrationOptIn();
-
-            Tracking.sendTrackingInfo(Tracking.SCENEBUILDER_USAGE_TYPE, hash, email, optIn, update);
-        }
-    }
-
-    private boolean shouldSendTrackingInfo(PreferencesRecordGlobal recordGlobal) {
-        LocalDate date = recordGlobal.getLastSentTrackingInfoDate();
-        boolean sendTrackingInfo = true;
-        LocalDate now = LocalDate.now();
-
-        if (date != null) {
-            sendTrackingInfo = date.plusWeeks(1).isBefore(now);
-            if (sendTrackingInfo) {
-                recordGlobal.setLastSentTrackingInfoDate(now);
-            }
-        } else {
-            recordGlobal.setLastSentTrackingInfoDate(now);
-        }
-        return sendTrackingInfo;
     }
 
     private void createEmptyDocumentWindow() {
@@ -722,11 +675,11 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         assert fxmlFiles != null;
         assert fxmlFiles.isEmpty() == false;
 
-        LOGGER.log(Level.FINE, "Opening {0} files...", fxmlFiles.size());
+        log.debug("Opening {} files...", fxmlFiles.size());
         final Map<File, Exception> exceptionsPerFile = new HashMap<>();
         final List<File> openedFiles = new ArrayList<>();
         for (File fxmlFile : fxmlFiles) {
-            LOGGER.log(Level.FINE, "Attempting to open file {0}", fxmlFile);
+            log.debug("Attempting to open file '{}'", fxmlFile);
             try {
                 final DocumentWindowController dwc
                         = lookupDocumentWindowControllers(fxmlFile.toURI().toURL());
@@ -739,10 +692,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                     hostWindow.loadFromFile(fxmlFile);
                     hostWindow.openWindow();
                     openedFiles.add(fxmlFile);
-                    LOGGER.log(Level.INFO, "Successfully opened file {0}", fxmlFile);
+                    log.info("Successfully opened file '{}'", fxmlFile);
                 }
             } catch (Exception xx) {
-                LOGGER.log(Level.WARNING, "Failed to open file: %s".formatted(fxmlFile), xx);
+                log.warn("Failed to open file '{}'", fxmlFile, xx);
                 exceptionsPerFile.put(fxmlFile, xx);
             }
         }
@@ -754,10 +707,10 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         }
 
         if (exceptionsPerFile.isEmpty()) {
-            LOGGER.log(Level.FINE, "Successfully opened all files.");
+            log.debug("Successfully opened all files.");
             onSuccess.run();
         } else {
-            LOGGER.log(Level.WARNING, "Failed to open {0} of {1} files!", new Object[] {exceptionsPerFile.size(), fxmlFiles.size()});
+            log.warn("Failed to open {} of {} files!", exceptionsPerFile.size(), fxmlFiles.size());
             onError.accept(exceptionsPerFile);
         }
     }
@@ -856,7 +809,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void logTimestamp(ACTION type) {
-        Logger.getLogger(this.getClass().getName()).info(I18N.getString(type.logKey));
+        log.info(I18N.getString(type.logKey));
     }
 
     private void setApplicationUncaughtExceptionHandler() {
@@ -871,7 +824,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         @Override
         public void uncaughtException(Thread t, Throwable e) {
             // Print the details of the exception in SceneBuilder log file
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "An exception was thrown:", e); //NOI18N
+            log.error("An exception was thrown", e);
         }
     }
 

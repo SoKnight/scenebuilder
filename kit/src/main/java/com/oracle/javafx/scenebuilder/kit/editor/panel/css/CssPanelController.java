@@ -37,7 +37,6 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssContentMaker.BeanPropertyState;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssContentMaker.CssPropertyState;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssContentMaker.CssPropertyState.CssStyle;
@@ -45,29 +44,19 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssContentMaker.Prope
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssValuePresenterFactory.CssValuePresenter;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.NodeCssState.CssProperty;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.SelectionPath.Item;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.css.SelectionPath.Path;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.css.SelectionPath.Path;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.ObjectSelectionGroup;
 import com.oracle.javafx.scenebuilder.kit.editor.selection.Selection;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMInstance;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.ValuePropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
 import com.oracle.javafx.scenebuilder.kit.util.CssInternal;
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.text.MessageFormat;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.animation.FadeTransition;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -92,24 +81,28 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.text.MessageFormat;
+import java.util.*;
 
 /**
  * Controller for the CSS Panel.
  *
  */
+@Slf4j
 public class CssPanelController extends AbstractFxmlPanelController {
-    
-    private static final Logger LOGGER = Logger.getLogger(CssPanelController.class.getName());
 
     @FXML
     private StackPane cssPanelHost;
@@ -976,7 +969,7 @@ public class CssPanelController extends AbstractFxmlPanelController {
                         + "javafx.graphics/javafx/scene/doc-files/cssref.html#" + //NOI18N
                         item.getTarget().getClass().getSimpleName().toLowerCase(Locale.ROOT));
             } catch (IOException e) {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to open JAVADOC_HOME: ", e);
+                log.warn("Failed to open JAVADOC_HOME", e);
             }
         }
     }
@@ -1452,7 +1445,7 @@ public class CssPanelController extends AbstractFxmlPanelController {
                             EditorPlatform.revealInFileBrowser(f);
                         }
                     } catch (URISyntaxException | IOException ex) {
-                        LOGGER.log(Level.SEVERE, "An unexpected error occured!", ex);
+                        log.error("An unexpected error occured!", ex);
                         final ErrorDialog errorDialog = new ErrorDialog(editorController.getOwnerWindow());
                         errorDialog.setTitle(I18N.getString("alert.error.file.reveal.title"));
                         errorDialog.setMessage(I18N.getString("alert.error.file.reveal.message"));

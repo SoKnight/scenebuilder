@@ -34,17 +34,17 @@ package com.oracle.javafx.scenebuilder.kit.library;
 
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * 
  */
+@Slf4j
 public class LibraryItem {
     
     private final String name;
@@ -90,8 +90,8 @@ public class LibraryItem {
         
         try {
             result = new FXOMDocument(fxmlText, null, library.getClassLoader(), null, FXOMDocumentSwitch.NORMALIZED);
-        } catch(Error|IOException e) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to instantiate a library item: ", e);
+        } catch (Error | IOException e) {
+            log.warn("Failed to instantiate a library item", e);
             result = null;
         }
         
@@ -143,13 +143,6 @@ public class LibraryItem {
     
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder();
-        
-        result.append(getClass().getSimpleName());
-        result.append('[');
-        result.append(name);
-        result.append(']');
-        
-        return result.toString();
+        return getClass().getSimpleName() + '[' + name + ']';
     }
 }

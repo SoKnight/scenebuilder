@@ -32,6 +32,38 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
+import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
+import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxListCell;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import javafx.util.Callback;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -48,52 +80,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.ErrorDialog;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument.FXOMDocumentSwitch;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
-import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
-import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
-import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
-
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.cell.CheckBoxListCell;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 
 /**
  *
  */
+@Slf4j
 public class ImportWindowController extends AbstractModalDialog {
-
-    private static final Logger LOGGER = Logger.getLogger(ImportWindowController.class.getSimpleName());
 
     public enum PrefSize {
 
@@ -504,7 +497,7 @@ public class ImportWindowController extends AbstractModalDialog {
                             }
                         }
                     }
-                    LOGGER.info(sb.toString());
+                    log.info(sb.toString());
 
                     if (jarReport.hasControlsFromExternalPlugin()) {
                         importingControlsFromExternalPlugin = true;

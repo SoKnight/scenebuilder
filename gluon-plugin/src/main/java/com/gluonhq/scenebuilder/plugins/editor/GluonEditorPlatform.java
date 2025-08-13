@@ -37,18 +37,16 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 public class GluonEditorPlatform {
-
-    private static final Logger LOGGER = Logger.getLogger(GluonEditorPlatform.class.getName());
 
     /**
      * Gluon Mobile
@@ -170,10 +168,10 @@ public class GluonEditorPlatform {
                         s = reader.readLine();
                     }
                 } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Failed reading color from stylesheet: ", e);
+                    log.warn("Failed reading color from stylesheet", e);
                 }
             } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "Failed to get color from stylesheet: ", e);
+                log.warn("Failed to get color from stylesheet", e);
             }
         }
         return color;

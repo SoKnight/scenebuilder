@@ -31,26 +31,23 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.aether.artifact.DefaultArtifact;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
 import java.util.stream.Collectors;
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import org.eclipse.aether.artifact.DefaultArtifact;
 
+@Slf4j
 public class NexusSearch implements Search {
 
     // nexus
@@ -116,7 +113,7 @@ public class NexusSearch implements Search {
                 return processRequest(obj);
             }
         } catch (InterruptedException | IOException ex) {
-            Logger.getLogger(NexusSearch.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
         return null;
     }

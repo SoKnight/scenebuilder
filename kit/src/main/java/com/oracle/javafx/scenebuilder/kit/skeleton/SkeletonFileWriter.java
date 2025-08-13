@@ -31,6 +31,12 @@
  */
 package com.oracle.javafx.scenebuilder.kit.skeleton;
 
+import javafx.beans.property.ReadOnlyStringProperty;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -42,19 +48,9 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.function.*;
 
-import javafx.beans.property.ReadOnlyStringProperty;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Stage;
-
+@Slf4j
 final class SkeletonFileWriter {
 
     private final Supplier<Stage> stageSupplier;
@@ -249,10 +245,7 @@ final class SkeletonFileWriter {
     }
 
     private void logErrorAndNotifyUser(Path skeletonFile, IOException error) {
-        onError.apply(stageSupplier)
-               .accept(skeletonFile.toFile(),error);
-        Logger logger = Logger.getLogger(SkeletonFileWriter.class.getSimpleName());
-        String template = "Could not write controller skeleton to file: %s .";
-        logger.log(Level.SEVERE, String.format(template, skeletonFile.normalize().toAbsolutePath()), error);
+        onError.apply(stageSupplier).accept(skeletonFile.toFile(), error);
+        log.error("Could not write controller skeleton to file: '{}'", skeletonFile.normalize().toAbsolutePath(), error);
     }
 }

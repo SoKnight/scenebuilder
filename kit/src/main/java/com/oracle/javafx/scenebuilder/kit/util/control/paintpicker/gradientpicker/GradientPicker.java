@@ -35,9 +35,14 @@ import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPicker.M
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.PaintPickerController;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.rotator.RotatorControl;
 import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.slider.SliderControl;
-
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
@@ -46,23 +51,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.*;
 import javafx.scene.shape.Rectangle;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
 
 /**
  * Controller class for the gradient part of the paint editor.
  */
+@Slf4j
 public class GradientPicker extends VBox {
 
     @FXML
@@ -236,7 +234,7 @@ public class GradientPicker extends VBox {
         try {
             loader.load();
         } catch (IOException ex) {
-            Logger.getLogger(GradientPicker.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
 
         assert proportional_checkbox != null;

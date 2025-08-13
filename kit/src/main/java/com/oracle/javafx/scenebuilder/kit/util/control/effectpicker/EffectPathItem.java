@@ -31,29 +31,24 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util.control.effectpicker;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Effect path item.
  */
+@Slf4j
 public abstract class EffectPathItem extends HBox {
 
     @FXML
@@ -192,7 +187,7 @@ public abstract class EffectPathItem extends HBox {
         try {
             loader.load();
         } catch (IOException ex) {
-            Logger.getLogger(EffectPathItem.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
 
         assert image_view != null;

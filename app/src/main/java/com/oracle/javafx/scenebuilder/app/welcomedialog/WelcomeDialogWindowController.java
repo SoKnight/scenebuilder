@@ -32,16 +32,6 @@
 
 package com.oracle.javafx.scenebuilder.app.welcomedialog;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
@@ -69,10 +59,18 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+@Slf4j
 public class WelcomeDialogWindowController extends TemplatesBaseWindowController {
-
-    private static final Logger LOGGER = Logger.getLogger(WelcomeDialogWindowController.class.getName());
 
     @FXML
     private BorderPane contentPane;
@@ -326,7 +324,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     void handleOpen(List<String> filePaths, 
                     Consumer<List<String>> missingFilesHandler,
                     Consumer<List<String>> fileLoader) {
-        LOGGER.log(Level.INFO, "Attempting to open files: {0}", filePaths);
+        log.info("Attempting to open files: {}", filePaths);
         if (filePaths.isEmpty()) {
             return;
         }
@@ -351,7 +349,7 @@ public class WelcomeDialogWindowController extends TemplatesBaseWindowController
     }
 
     private void removeMissingFilesFromPrefs(List<String> missingFiles) {
-        missingFiles.forEach(fxmlFileName -> LOGGER.log(Level.INFO, "Removing missing file from recent items: {0}", fxmlFileName));
+        missingFiles.forEach(fxmlFileName -> log.info("Removing missing file from recent items: {}", fxmlFileName));
         PreferencesRecordGlobal preferencesRecordGlobal = PreferencesController.getSingleton().getRecordGlobal();
         preferencesRecordGlobal.removeRecentItems(missingFiles);
     }

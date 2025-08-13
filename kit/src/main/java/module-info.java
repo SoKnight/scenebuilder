@@ -31,17 +31,20 @@
  */
 
 module com.gluonhq.scenebuilder.kit {
+    requires static lombok;
+
     requires transitive javafx.graphics;
     requires transitive javafx.controls;
     requires transitive javafx.fxml;
     requires javafx.swing;
     requires javafx.media;
     requires transitive javafx.web;
-    requires java.logging;
 
+    requires ch.qos.logback.classic;
     requires java.net.http;
     requires static jakarta.json;
     requires transitive static java.prefs;
+    requires org.slf4j;
 
     requires static org.apache.maven.resolver;
     requires static org.apache.maven.resolver.spi;

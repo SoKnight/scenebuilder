@@ -42,13 +42,13 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowController {
 
     private Consumer<Template> onTemplateChosen = template -> {};
@@ -91,7 +91,7 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
             desktopPane = (FlowPane) templatesRoot.getContent().lookup("#desktopPane");
             mobilePane = (FlowPane) templatesRoot.getContent().lookup("#mobilePane");
         } catch (Exception e) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to lookup() [desktopPane] and [mobilePane]:", e);
+            log.warn("Failed to lookup() [desktopPane] and [mobilePane]:", e);
             return;
         }
 
@@ -116,7 +116,7 @@ public abstract class TemplatesBaseWindowController extends AbstractFxmlWindowCo
                     mobilePane.getChildren().add(btnRoot);
                 }
             } catch (Exception e) {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to load template: " + template, e);
+                log.warn("Failed to load template: '{}'", template, e);
 
                 // do not rethrow since SB is completely functional without templates
             }

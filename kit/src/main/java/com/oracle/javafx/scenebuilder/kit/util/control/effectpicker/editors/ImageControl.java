@@ -35,16 +35,6 @@ package com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.editors;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPickerController;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
@@ -57,7 +47,18 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Arrays;
+
+@Slf4j
 public class ImageControl extends GridPane {
 
     @FXML
@@ -147,7 +148,7 @@ public class ImageControl extends GridPane {
             // Then notify the controller a change occured
             effectPickerController.incrementRevision();
         } catch (MalformedURLException ex) {
-            Logger.getLogger(ImageControl.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         } finally {
             e.consume();
         }

@@ -67,8 +67,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -89,10 +87,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.StackPane;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
  */
+@Slf4j
 public class MenuBarController {
     
     private static MenuBarController systemMenuBarController; // For Mac only
@@ -470,7 +470,7 @@ public class MenuBarController {
                         + "loader.getController()=" + loader.getController() + "\n"
                         + "loader.getLocation()=" + loader.getLocation() + ":";
 
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, logMessage, x);
+                log.warn(logMessage, x);
 
                 throw new RuntimeException("Failed to load " + fxmlURL.getFile(), x); //NOI18N
             }
@@ -1243,7 +1243,7 @@ public class MenuBarController {
                             = new Exception(c.getClass().getSimpleName() 
                             + ".canPerform() did break for menu item " + i, x); //NOI18N
 
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, xx.getMessage(), xx);
+                    log.warn(xx.getMessage(), xx);
                 }
                 disable = !canPerform;
                 title = c.getTitle();

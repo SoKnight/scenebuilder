@@ -36,25 +36,21 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.editors.util.SB
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.ComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.klass.CustomComponentClassMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.PropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.BooleanPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DurationPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EventHandlerPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.ImagePropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.InsetsPropertyMetadata;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.*;
+import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.list.StringListPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.ColorPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.DoublePropertyMetadata.DoubleKind;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.EnumerationPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.FontPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.IntegerPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.property.value.paint.PaintPropertyMetadata;
-import com.oracle.javafx.scenebuilder.kit.metadata.property.value.StringPropertyMetadata;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath;
-
-import static com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath.CUSTOM_SECTION;
-import static com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath.CUSTOM_SUB_SECTION;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.PropertyName;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.util.Duration;
+import lombok.extern.slf4j.Slf4j;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -70,20 +66,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
-import javafx.util.Duration;
+import static com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath.CUSTOM_SECTION;
+import static com.oracle.javafx.scenebuilder.kit.metadata.util.InspectorPath.CUSTOM_SUB_SECTION;
 
 /**
  *
  * 
  */
+@Slf4j
 class MetadataIntrospector {
     
     private final Class<?> componentClass;
@@ -303,7 +294,7 @@ class MetadataIntrospector {
                         }
                     }
                 } catch (NoSuchMethodException e) {
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to find method: " + methodName, e);
+                    log.warn("Failed to find method: {}", methodName, e);
                 }
             } else {
                 result = null;

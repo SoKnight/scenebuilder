@@ -32,14 +32,15 @@
 package com.oracle.javafx.scenebuilder.kit.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
  * Defines repository preferences global to the application.
  */
+@Slf4j
 public class PreferencesRecordRepository {
     
     private final Preferences repositoriesRootPreferences;
@@ -76,7 +77,7 @@ public class PreferencesRecordRepository {
                 }
             }
         } catch (BackingStoreException ex) {
-            Logger.getLogger(PreferencesRecordRepository.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
             
         if (repositoryPreferences == null) {
@@ -103,7 +104,7 @@ public class PreferencesRecordRepository {
                 // Create a new document preference node under the document root node
                 repositoryPreferences = repositoriesRootPreferences.node(repository.getId());
             } catch(BackingStoreException ex) {
-                Logger.getLogger(PreferencesRecordRepository.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex.getMessage(), ex);
                 return;
             }
         }

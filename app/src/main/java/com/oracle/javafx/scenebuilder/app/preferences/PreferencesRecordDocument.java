@@ -36,32 +36,16 @@ import com.gluonhq.scenebuilder.plugins.editor.GluonEditorController;
 import com.gluonhq.scenebuilder.plugins.editor.GluonEditorPlatform;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController;
 import com.oracle.javafx.scenebuilder.app.SplitController;
-
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.BOTTOM_DIVIDER_VPOS;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.BOTTOM_VISIBLE;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.DOCUMENT_VISIBLE;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_SWATCH;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.GLUON_THEME;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.I18N_RESOURCE;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.STAGE_HEIGHT;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.INSPECTOR_SECTION_ID;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.LEFT_VISIBLE;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.LEFT_DIVIDER_HPOS;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.LEFT_DIVIDER_VPOS;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.LIBRARY_VISIBLE;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.PATH;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RIGHT_DIVIDER_HPOS;
-import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.RIGHT_VISIBLE;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.SCENE_STYLE_SHEETS;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.STAGE_WIDTH;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.THEME;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.X_POS;
-import static com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase.Y_POS;
-
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController.SectionId;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Accordion;
+import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -69,20 +53,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Accordion;
-import javafx.stage.Stage;
+import static com.oracle.javafx.scenebuilder.app.preferences.PreferencesController.*;
 
 /**
  * Defines preferences specific to a document.
  */
+@Slf4j
 public class PreferencesRecordDocument {
 
     private static final double UNDEFINED_POS = -1.0;
@@ -549,10 +528,10 @@ public class PreferencesRecordDocument {
                 }
             }
         } catch (BackingStoreException ex) {
-            Logger.getLogger(PreferencesRecordDocument.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
             return;
         } catch (URISyntaxException ex) {
-            Logger.getLogger(PreferencesRecordDocument.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
 
         // There is no preferences for this document in the Java preferences DB
@@ -686,10 +665,10 @@ public class PreferencesRecordDocument {
                 // Document path
                 documentPreferences.put(PATH, filePath);
             } catch (BackingStoreException ex) {
-                Logger.getLogger(PreferencesRecordDocument.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex.getMessage(), ex);
                 return;
             } catch (URISyntaxException ex) {
-                Logger.getLogger(PreferencesRecordDocument.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex.getMessage(), ex);
             }
         }
 

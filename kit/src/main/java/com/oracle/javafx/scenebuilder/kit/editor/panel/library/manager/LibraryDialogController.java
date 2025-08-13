@@ -32,20 +32,6 @@
 
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
@@ -61,7 +47,6 @@ import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
-
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -74,10 +59,24 @@ import javafx.scene.control.Tooltip;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Controller for the JAR/FXML Library dialog.
  */
+@Slf4j
 public class LibraryDialogController extends AbstractFxmlWindowController {
 
     @FXML
@@ -167,7 +166,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                     }
                 }
             } catch (IOException x) {
-                Logger.getLogger(LibraryDialogController.class.getName()).log(Level.SEVERE, "Error while getting a new directory stream.", x);
+                log.error("Error while getting a new directory stream", x);
             }
         }
         
@@ -301,7 +300,7 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 listItems.remove(dialogListItem);
             }
         } catch (IOException x) {
-            Logger.getLogger(LibraryDialogController.class.getName()).log(Level.SEVERE, "Error while deleting the file.", x);
+            log.error("Error while deleting the file", x);
         }
         loadLibraryList();
     }

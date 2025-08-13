@@ -31,6 +31,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.i18n.spi;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,10 +43,9 @@ import java.nio.file.Path;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.spi.AbstractResourceBundleProvider;
 
+@Slf4j
 public class I18NResourcesProviderImpl extends AbstractResourceBundleProvider implements I18NResourcesProvider {
 
     public I18NResourcesProviderImpl() {
@@ -62,7 +63,7 @@ public class I18NResourcesProviderImpl extends AbstractResourceBundleProvider im
              BufferedReader reader = new BufferedReader(isr)) {
             return new PropertyResourceBundle(reader);
         } catch (IOException e) {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to create ResourceBundle for bundleName: " + bundleName + " and resourceName: " + resourceName, e);
+            log.warn("Failed to create ResourceBundle for bundleName: {} and resourceName: {}", bundleName, resourceName, e);
             return null;
         }
     }

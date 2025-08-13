@@ -31,23 +31,10 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset.MavenPresets;
-import java.io.File;
-import java.nio.file.Path;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
 import com.oracle.javafx.scenebuilder.kit.preferences.RepositoryPreferences;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositorySystem;
@@ -65,15 +52,7 @@ import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
-import org.eclipse.aether.resolution.ArtifactRequest;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
-import org.eclipse.aether.resolution.ArtifactResult;
-import org.eclipse.aether.resolution.DependencyRequest;
-import org.eclipse.aether.resolution.DependencyResolutionException;
-import org.eclipse.aether.resolution.DependencyResult;
-import org.eclipse.aether.resolution.VersionRangeRequest;
-import org.eclipse.aether.resolution.VersionRangeResolutionException;
-import org.eclipse.aether.resolution.VersionRangeResult;
+import org.eclipse.aether.resolution.*;
 import org.eclipse.aether.supplier.RepositorySystemSupplier;
 import org.eclipse.aether.transfer.AbstractTransferListener;
 import org.eclipse.aether.transfer.TransferEvent;
@@ -84,11 +63,19 @@ import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.repository.AuthenticationBuilder;
 import org.eclipse.aether.version.Version;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
+@Slf4j
 public class MavenRepositorySystem {
-
-    private static final Logger LOG = Logger.getLogger(MavenRepositorySystem.class.getName());
 
     // TODO: Manage List of Repositories
     // TODO: Manage private repositories and credentials
@@ -129,17 +116,17 @@ public class MavenRepositorySystem {
             .withTransferListener(new AbstractTransferListener() {
                 @Override
                 public void transferSucceeded(TransferEvent event) {
-                    LOG.finest("Transfer succeeded: " + event);
+                    log.debug("Transfer succeeded: {}", event);
                 }
                 @Override
                 public void transferFailed(TransferEvent event) {
-                    LOG.finest("Transfer failed: " + event);
+                    log.debug("Transfer failed: {}", event);
                 }
             })
             .withRepositoryListener(new AbstractRepositoryListener() {
                 @Override
                 public void artifactResolved(RepositoryEvent event) {
-                    LOG.finest("Artifact resolved: " + event);
+                    log.debug("Artifact resolved: {}", event);
                 }
             })
             .withLocalRepositories(localRepo)
@@ -182,7 +169,7 @@ public class MavenRepositorySystem {
             
             return rangeResult.getVersions();
         } catch (VersionRangeResolutionException ex) {
-            LOG.finer("VersionRangeResolutionException finding version for artifact " + artifact + ": " + ex);
+            log.debug("VersionRangeResolutionException finding version for artifact {}", artifact, ex);
         }
         return new ArrayList<>();
     }
@@ -199,7 +186,7 @@ public class MavenRepositorySystem {
                 .max(Comparator.naturalOrder())
                 .orElse(null);
         } catch (VersionRangeResolutionException ex) {
-            LOG.finer("VersionRangeResolutionException finding latest version for artifact " + artifact + ": " + ex);
+            log.debug("VersionRangeResolutionException finding latest version for artifact {}", artifact, ex);
         }
         return null;
     }
@@ -219,7 +206,7 @@ public class MavenRepositorySystem {
                         Files.delete(file);
                         Files.delete(new File(file + ".sha1").toPath());
                     } catch (IOException ex) {
-                        LOG.finer("Error deleting file " + file + ": " + ex);
+                        log.debug("Error deleting file '{}'", file, ex);
                     }
                 }
             });
@@ -239,7 +226,7 @@ public class MavenRepositorySystem {
                         ArtifactResult result = system.resolveArtifact(session, ar);
                         return result.getArtifact();
                     } catch (ArtifactResolutionException ex) {
-                        LOG.finer("ArtifactResolutionException for artifact request " + ar + ": " + ex);
+                        log.debug("ArtifactResolutionException for artifact request {}", ar, ex);
                     }
                     return null;
                 })
@@ -258,7 +245,7 @@ public class MavenRepositorySystem {
             try {
                 system.install(session, installRequest);
             } catch (InstallationException ex) {
-                LOG.finer("InstallationException for install request " + installRequest + ": " + ex);
+                log.debug("InstallationException for install request {}", installRequest, ex);
             }
         } 
 
@@ -273,7 +260,7 @@ public class MavenRepositorySystem {
                 sha1Paths.forEach(path -> copyFile(path, jarFile.getParent().resolve(path.getFileName())));
             }
         } catch (ArtifactResolutionException ex) {
-            LOG.finer("ArtifactResolutionException for artifact request " + artifactRequest + ": " + ex);
+            log.debug("ArtifactResolutionException for artifact request {}", artifactRequest, ex);
         }
 
         return absolutePath;
@@ -296,7 +283,7 @@ public class MavenRepositorySystem {
                     .map(a -> a.getArtifact().getPath().toAbsolutePath().toString())
                     .collect(Collectors.joining(File.pathSeparator));
         } catch (DependencyResolutionException ex) {
-            LOG.finer("DependencyResolutionException for artifact " + artifact + ": " + ex);
+            log.debug("DependencyResolutionException for artifact {}", artifact, ex);
         }
         return "";
     }
@@ -341,7 +328,7 @@ public class MavenRepositorySystem {
             Files.createDirectories(destination.getParent());
             Files.copy(source, destination, REPLACE_EXISTING);
         } catch (IOException ex) {
-            LOG.finer("Error copying file " + source + " to destination " + destination + ": " + ex);
+            log.debug("Error copying file '{}' to destination '{}'", source, destination, ex);
         }
     }
 

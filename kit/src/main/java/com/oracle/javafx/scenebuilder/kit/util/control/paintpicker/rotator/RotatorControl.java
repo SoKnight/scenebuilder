@@ -31,10 +31,6 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.rotator;
 
-import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.gradientpicker.GradientPicker;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.ActionEvent;
@@ -48,7 +44,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+
+@Slf4j
 public class RotatorControl extends GridPane {
 
     @FXML
@@ -91,7 +91,7 @@ public class RotatorControl extends GridPane {
         try {
             loader.load();
         } catch (IOException ex) {
-            Logger.getLogger(GradientPicker.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
 
         assert rotator_label != null;

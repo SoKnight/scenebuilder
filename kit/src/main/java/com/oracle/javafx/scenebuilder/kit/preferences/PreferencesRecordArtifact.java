@@ -32,14 +32,15 @@
 package com.oracle.javafx.scenebuilder.kit.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
  * Defines artifacts preferences global to the application.
  */
+@Slf4j
 public class PreferencesRecordArtifact {
     
     private final Preferences artifactsRootPreferences;
@@ -108,7 +109,7 @@ public class PreferencesRecordArtifact {
                 }
             }
         } catch (BackingStoreException ex) {
-            Logger.getLogger(PreferencesRecordArtifact.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
             
         if (artifactPreferences == null) {
@@ -135,8 +136,8 @@ public class PreferencesRecordArtifact {
                 assert artifactsRootPreferences.nodeExists(mavenArtifact.getCoordinates()) == false;
                 // Create a new document preference node under the document root node
                 artifactPreferences = artifactsRootPreferences.node(mavenArtifact.getCoordinates());
-            } catch(BackingStoreException ex) {
-                Logger.getLogger(PreferencesRecordArtifact.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (BackingStoreException ex) {
+                log.error(ex.getMessage(), ex);
                 return;
             }
         }

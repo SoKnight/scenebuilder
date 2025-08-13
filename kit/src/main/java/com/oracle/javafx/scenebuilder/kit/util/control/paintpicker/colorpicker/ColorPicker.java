@@ -60,14 +60,14 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
 import javafx.scene.paint.RadialGradient;
 import javafx.scene.shape.Circle;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller class for the color part of the paint editor.
  */
+@Slf4j
 public class ColorPicker extends VBox {
 
     @FXML
@@ -145,7 +145,7 @@ public class ColorPicker extends VBox {
         try {
             loader.load();
         } catch (IOException ex) {
-            Logger.getLogger(ColorPicker.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
 
         assert hue_slider != null;

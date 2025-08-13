@@ -31,22 +31,20 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.slider;
 
-import com.oracle.javafx.scenebuilder.kit.util.control.paintpicker.gradientpicker.GradientPicker;
-
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Slider;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+
+@Slf4j
 public class SliderControl extends GridPane {
 
     @FXML
@@ -77,7 +75,7 @@ public class SliderControl extends GridPane {
         try {
             loader.load();
         } catch (IOException ex) {
-            Logger.getLogger(GradientPicker.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
 
         assert slider_label != null;

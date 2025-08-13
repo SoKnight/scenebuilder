@@ -30,8 +30,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 module com.gluonhq.scenebuilder.gluon.plugin {
+    requires static lombok;
+
     requires transitive com.gluonhq.scenebuilder.kit;
-    requires java.logging;
+
+    requires ch.qos.logback.classic;
+    requires org.slf4j;
 
     requires com.gluonhq.charm.glisten;
     requires com.gluonhq.attach.display;

@@ -32,31 +32,24 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ServiceLoader;
-import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * This class contains static methods that depends on the platform.
  *
  * @treatAsPrivate
  */
+@Slf4j
 public class EditorPlatform {
-    
-    private static final Logger LOGGER = Logger.getLogger(EditorPlatform.class.getName());
     
     public enum OS {
         LINUX, MAC, WINDOWS;
@@ -69,7 +62,7 @@ public class EditorPlatform {
     private static final String osName = System.getProperty("os.name").toLowerCase(Locale.ROOT); //NOI18N
 
     static {
-        LOGGER.log(Level.FINE, "Detected Operating System: {0}", osName);
+        log.debug("Detected Operating System: {}", osName);
     }
     
     /**
@@ -272,7 +265,7 @@ public class EditorPlatform {
             args.add(path);
         } else {
             // Not Supported
-            LOGGER.log(Level.SEVERE, "Unsupported operating system! Cannot reveal location {0} in file browser.", path);
+            log.error("Unsupported operating system! Cannot reveal location '{}' in file browser.", path);
         }
 
         if (!args.isEmpty()) {
@@ -333,19 +326,18 @@ public class EditorPlatform {
         try {
             int exitValue = new Cmd().exec(cmd, wDir, timeoutSec);
             if (exitCodeOk != exitValue) {
-                LOGGER.log(Level.SEVERE, "Error during attempt to run: {0} in {1}", new Object[] { cmdLine, wDir });
+                log.error("Error during attempt to run: {} in {}", cmdLine, wDir);
                 throw new FileBrowserRevealException(
                         "The command to reval the file exited with an error (exitValue=%s).\nCommand: %s\nWorking Dir: %s"
                                 .formatted(Integer.toString(exitValue), cmdLine, wDir));
             } else {
-                LOGGER.log(Level.FINE, "Successfully executed command: {0} in {1}", new Object[] { cmdLine, wDir });
+                log.debug("Successfully executed command: {} in {}", cmdLine, wDir);
             }
         } catch (RuntimeException ex) {
-            LOGGER.log(Level.SEVERE, "Unknown error during attempt to run: {0} in {1}", new Object[] { cmdLine, wDir });
+            log.error("Unknown error during attempt to run: {} in {}", cmdLine, wDir);
             throw new IOException(ex);
         } catch (InterruptedException e) {
-            LOGGER.log(Level.SEVERE, "Process timeout after {0}s: {1} in {2}",
-                    new Object[] { timeoutSec, cmdLine, wDir });
+            log.error("Process timeout after {}s: {} in {}", timeoutSec, cmdLine, wDir);
             Thread.currentThread().interrupt();
             String msg = "The command to reveal the file exited with an error after timeout.\nCommand: %s\nWorking Dir: %s\nTimeout (s):%s"
                     .formatted(cmdLine, wDir, timeoutSec);

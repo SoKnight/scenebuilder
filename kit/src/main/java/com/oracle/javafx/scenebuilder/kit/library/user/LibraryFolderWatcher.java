@@ -32,6 +32,14 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.user;
 
+import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryUtil;
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
+import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
+import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
+import com.oracle.javafx.scenebuilder.kit.library.util.*;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,43 +48,16 @@ import java.lang.module.ModuleReference;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.logging.Logger;
+import java.nio.file.*;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import com.oracle.javafx.scenebuilder.kit.editor.images.ImageUtils;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryUtil;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
-import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
-import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
-import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
-import com.oracle.javafx.scenebuilder.kit.library.util.ModuleExplorer;
 
 /**
  *
  * 
  */
+@Slf4j
 class LibraryFolderWatcher implements Runnable {
-
-    private static final Logger LOGGER = Logger.getLogger(LibraryFolderWatcher.class.getSimpleName());
 
     private final UserLibrary library;
 
@@ -96,7 +77,6 @@ class LibraryFolderWatcher implements Runnable {
     
     @Override
     public void run() {
-        
         try {
             library.updateExplorationCount(0);
             library.updateExplorationDate(new Date());
@@ -267,7 +247,7 @@ class LibraryFolderWatcher implements Runnable {
                 try {
                     watchService.close();
                 } catch (IOException e) {
-                	LOGGER.severe("Error closing FileSystemWatchService: " + e.getMessage());
+                    log.error("Error closing FileSystemWatchService", e);
                 }
             }
         }
@@ -352,6 +332,7 @@ class LibraryFolderWatcher implements Runnable {
     
     
     private void exploreAndUpdateLibrary(Collection<Path> modulesOrJarsOrFolders) throws IOException {
+        log.info("Exploring and updating library...");
 
         //  1) we create a classloader
         //  2) we explore all the modules, jars, and folders
@@ -379,19 +360,19 @@ class LibraryFolderWatcher implements Runnable {
             String resultText = "";
             Optional<ModuleReference> moduleReference = LibraryUtil.getModuleReference(currentModuleOrJarOrFolder);
             if (moduleReference.isPresent()) {
-                LOGGER.info(I18N.getString("log.info.explore.module", moduleReference.get().descriptor()));
+                log.debug(I18N.getString("log.info.explore.module", moduleReference.get().descriptor()));
                 final ModuleExplorer explorer = new ModuleExplorer(moduleReference.get());
                 jarReport = explorer.explore();
                 resultText = I18N.getString("log.info.explore.module.results", jarName);
             }
             else if (LibraryUtil.isJarPath(currentModuleOrJarOrFolder)) {
-                LOGGER.info(I18N.getString("log.info.explore.jar", currentModuleOrJarOrFolder));
+                log.debug(I18N.getString("log.info.explore.jar", currentModuleOrJarOrFolder));
                 final JarExplorer explorer = new JarExplorer(currentModuleOrJarOrFolder);
                 jarReport = explorer.explore(classLoader);
                 resultText = I18N.getString("log.info.explore.jar.results", jarName);
             }
             else if (Files.isDirectory(currentModuleOrJarOrFolder)) {
-                LOGGER.info(I18N.getString("log.info.explore.folder", currentModuleOrJarOrFolder));
+                log.debug(I18N.getString("log.info.explore.folder", currentModuleOrJarOrFolder));
                 final FolderExplorer explorer = new FolderExplorer(currentModuleOrJarOrFolder);
                 jarReport = explorer.explore(classLoader);
                 resultText = I18N.getString("log.info.explore.folder.results", jarName);
@@ -401,15 +382,14 @@ class LibraryFolderWatcher implements Runnable {
 
             moduleOrJarOrFolderReports.add(jarReport);
 
-            StringBuilder sb = new StringBuilder(resultText).append("\n");
+            log.debug(resultText);
             if (jarReport.getEntries().isEmpty()) {
-                sb.append("> ").append(I18N.getString("log.info.explore.no.results"));
+                log.debug("- {}", I18N.getString("log.info.explore.no.results"));
             } else {
-                jarReport.getEntries().forEach(entry -> sb.append("> ").append(entry.toString()).append("\n"));
+                jarReport.getEntries().forEach(entry -> log.info("- {}", entry));
             }
-            LOGGER.info(sb.toString());
 
-            LOGGER.info(I18N.getString("log.info.explore.end", currentModuleOrJarOrFolder));
+            log.debug(I18N.getString("log.info.explore.end", currentModuleOrJarOrFolder));
         }
 
         // 3)

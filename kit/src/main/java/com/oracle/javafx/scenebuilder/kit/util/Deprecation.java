@@ -32,9 +32,9 @@
  */
 package com.oracle.javafx.scenebuilder.kit.util;
 
-import javafx.css.Style;
 import javafx.collections.ObservableMap;
 import javafx.css.CssMetaData;
+import javafx.css.Style;
 import javafx.css.Styleable;
 import javafx.css.StyleableProperty;
 import javafx.fxml.FXMLLoader;
@@ -44,7 +44,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.SubScene;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.GridPane;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -52,11 +55,8 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 
+@Slf4j
 @SuppressWarnings("deprecation")
 public class Deprecation {
 
@@ -94,7 +94,7 @@ public class Deprecation {
         try {
             reapplyCSS(parent, stylesheetPath.toURL());
         } catch (MalformedURLException ex) {
-            Logger.getLogger(Deprecation.class.getName()).log(Level.SEVERE, "Error while retrieving the URL", ex);
+            log.error("Error while retrieving the URL", ex);
         }
     }
 

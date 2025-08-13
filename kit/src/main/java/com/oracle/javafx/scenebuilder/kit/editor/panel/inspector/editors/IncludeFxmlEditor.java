@@ -43,6 +43,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -51,12 +52,11 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Editor for including FXML files into the main document (through fx:include).
  */
+@Slf4j
 public class IncludeFxmlEditor extends InlineListEditor {
 
     private final StackPane root = new StackPane();
@@ -141,7 +141,7 @@ public class IncludeFxmlEditor extends InlineListEditor {
         try {
             url = includedFile.toURI().toURL();
         } catch (MalformedURLException ex) {
-            Logger.getLogger(IncludeFxmlEditor.class.getName()).log(Level.SEVERE, "Path could not be determined.", ex);
+            log.error("Path could not be determined", ex);
         }
         String prefixedValue = PrefixedValue.makePrefixedValue(url, editorController.getFxmlLocation()).toString();
         return removeAtSign(prefixedValue);

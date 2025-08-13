@@ -44,6 +44,8 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.json.JsonReaderFactory;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,12 +54,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+@Slf4j
 public class AppSettings {
-
-    private static final Logger LOGGER = Logger.getLogger(AppSettings.class.getName());
 
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
     public static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
@@ -89,7 +88,7 @@ public class AppSettings {
                 sceneBuilderVersion = sbProps.getProperty("build.version", "UNSET");
             }
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Cannot init SB version:", e);
+            log.error("Cannot init SB version", e);
         }
     }
 
@@ -134,7 +133,7 @@ public class AppSettings {
         return new Task<String>() {
             @Override
             protected String call() throws Exception {
-                LOGGER.log(Level.FINE, "Fetching latest Scenebuilder version from: {0}", LATEST_VERSION_CHECK_URL);
+                log.debug("Fetching latest Scenebuilder version from: '{}'", LATEST_VERSION_CHECK_URL);
                 Properties prop = new Properties();
                 String onlineVersionNumber = null;
 
@@ -142,7 +141,7 @@ public class AppSettings {
                 try {
                     url = new URL(LATEST_VERSION_CHECK_URL);
                 } catch (MalformedURLException e) {
-                    LOGGER.log(Level.WARNING, "Failed to construct version check URL: ", e);
+                    log.warn("Failed to construct version check URL", e);
                 }
 
                 try (InputStream inputStream = url.openStream()) {
@@ -150,14 +149,14 @@ public class AppSettings {
                     onlineVersionNumber = prop.getProperty(LATEST_VERSION_NUMBER_PROPERTY);
 
                 } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "Failed to load latest version number property: ", e);
+                    log.warn("Failed to load latest version number property", e);
                 }
                 return onlineVersionNumber;
             }
 
             protected void succeeded() { 
                 String fetchedVersion = getValue();
-                LOGGER.log(Level.INFO, "Latest online available version is: {0}", fetchedVersion);
+                log.info("Latest online available version is: {}", fetchedVersion);
                 consumer.accept(fetchedVersion);
                 latestVersion = fetchedVersion;
             }
@@ -181,10 +180,10 @@ public class AppSettings {
                 latestVersionText = announcementObject.getString("text");
                 latestVersionAnnouncementURL = announcementObject.getString("url");
             } catch (IOException e) {
-                LOGGER.log(Level.WARNING, "Failed to read latest version json: ", e);
+                log.warn("Failed to read latest version json", e);
             }
         } catch (MalformedURLException e) {
-            LOGGER.log(Level.WARNING, "Failed to construct latest version info URL: ", e);
+            log.warn("Failed to construct latest version info URL", e);
         }
     }
 

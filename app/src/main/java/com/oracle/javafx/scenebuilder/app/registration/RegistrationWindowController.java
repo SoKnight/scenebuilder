@@ -35,7 +35,6 @@ package com.oracle.javafx.scenebuilder.app.registration;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
-import com.oracle.javafx.scenebuilder.app.tracking.Tracking;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
@@ -122,7 +121,6 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
         if (recordGlobal.getRegistrationHash() == null) {
             String hash = getUniqueId();
             recordGlobal.updateRegistrationFields(hash, null, null);
-            Tracking.sendTrackingInfo(Tracking.SCENEBUILDER_TYPE, hash, "", false, false);
         }
 
         closeWindow();
@@ -145,8 +143,6 @@ public class RegistrationWindowController extends AbstractFxmlWindowController {
                 
         // Update preferences
         recordGlobal.updateRegistrationFields(hash, email, optIn);
-
-        Tracking.sendTrackingInfo(Tracking.SCENEBUILDER_TYPE, hash, email, optIn, update);
 
         closeWindow();
     }

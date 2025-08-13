@@ -54,8 +54,8 @@ import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelContr
 import com.oracle.javafx.scenebuilder.kit.editor.panel.css.CssPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.AbstractHierarchyPanelController.DisplayOption;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.info.InfoPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.hierarchy.HierarchyPanelController;
+import com.oracle.javafx.scenebuilder.kit.editor.panel.info.InfoPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.InspectorPanelController.SectionId;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
@@ -77,6 +77,27 @@ import com.oracle.javafx.scenebuilder.kit.preview.PreviewWindowController;
 import com.oracle.javafx.scenebuilder.kit.selectionbar.SelectionBarController;
 import com.oracle.javafx.scenebuilder.kit.skeleton.SkeletonWindowController;
 import com.oracle.javafx.scenebuilder.kit.util.Utils;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,50 +111,14 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextInputControl;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
+import java.util.*;
 
 /**
  * Handles all editing and control actions in the Scene Builder editor window.
  * Editing action are used to modify a document (cut, paste, delete, import).
  * Control actions in most cases do not cause document structure modifications. 
  */
+@Slf4j
 public class DocumentWindowController extends AbstractFxmlWindowController {
 
     public enum DocumentControlAction {
@@ -187,8 +172,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         CANCELLED,
         DONE
     }
-    
-    private static final Logger LOGGER = Logger.getLogger(DocumentWindowController.class.getName());
     
     private final EditorController editorController = new EditorController();
     private final MenuBarController menuBarController = new MenuBarController(this);
@@ -2294,10 +2277,10 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     
     private void openURL(String url) {
         try {
-            LOGGER.log(Level.FINE, "Attempting to open URL: {0}", url);
+            log.debug("Attempting to open URL: {}", url);
             EditorPlatform.open(url);
         } catch (IOException ioe) {
-            LOGGER.log(Level.WARNING, "Error during attempt to open URL!", ioe);
+            log.warn("Error during attempt to open URL!", ioe);
             handleRevealResourceException(ioe, url);
         }
     }

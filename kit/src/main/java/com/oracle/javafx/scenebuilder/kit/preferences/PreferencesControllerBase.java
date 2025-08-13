@@ -33,12 +33,12 @@ package com.oracle.javafx.scenebuilder.kit.preferences;
 
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+@Slf4j
 public abstract class PreferencesControllerBase {
 
     /***************************************************************************
@@ -132,7 +132,7 @@ public abstract class PreferencesControllerBase {
                 mavenPreferences.addRecordArtifact(child, recordArtifact);
             }
         } catch (BackingStoreException ex) {
-            Logger.getLogger(PreferencesControllerBase.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
 
         // repositories
@@ -153,7 +153,7 @@ public abstract class PreferencesControllerBase {
                 repositoryPreferences.addRecordRepository(child, recordRepository);
             }
         } catch (BackingStoreException ex) {
-            Logger.getLogger(PreferencesControllerBase.class.getName()).log(Level.SEVERE, null, ex);
+            log.error(ex.getMessage(), ex);
         }
 
     }
@@ -189,7 +189,7 @@ public abstract class PreferencesControllerBase {
                 node.removeNode();
                 mavenPreferences.removeRecordArtifact(coordinates);
             } catch (BackingStoreException ex) {
-                Logger.getLogger(PreferencesControllerBase.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex.getMessage(), ex);
             }
         }
     }
@@ -215,7 +215,7 @@ public abstract class PreferencesControllerBase {
                 node.removeNode();
                 repositoryPreferences.removeRecordRepository(id);
             } catch (BackingStoreException ex) {
-                Logger.getLogger(PreferencesControllerBase.class.getName()).log(Level.SEVERE, null, ex);
+                log.error(ex.getMessage(), ex);
             }
         }
     }

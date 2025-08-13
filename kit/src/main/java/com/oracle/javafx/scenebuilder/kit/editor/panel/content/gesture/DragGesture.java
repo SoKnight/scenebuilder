@@ -34,11 +34,7 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content.gesture;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.DragController;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.AbstractDragSource;
 import com.oracle.javafx.scenebuilder.kit.editor.drag.source.ExternalDragSource;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AbstractDropTarget;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.target.AccessoryDropTarget;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.target.ContainerXYDropTarget;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.target.ImageViewDropTarget;
-import com.oracle.javafx.scenebuilder.kit.editor.drag.target.RootDropTarget;
+import com.oracle.javafx.scenebuilder.kit.editor.drag.target.*;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.ContentPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.AbstractDriver;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.content.driver.BorderPaneDriver;
@@ -50,12 +46,6 @@ import com.oracle.javafx.scenebuilder.kit.fxom.FXOMObject;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask;
 import com.oracle.javafx.scenebuilder.kit.metadata.util.DesignHierarchyMask.Accessory;
 import com.oracle.javafx.scenebuilder.kit.util.MathUtils;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.event.EventType;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -68,14 +58,17 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Window;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
  * 
  */
+@Slf4j
 public class DragGesture extends AbstractGesture {
-    
-    private static final Logger LOG = Logger.getLogger(DragGesture.class.getName());
 
     private final double MARGIN = 14.0;
     
@@ -197,7 +190,7 @@ public class DragGesture extends AbstractGesture {
          */
         
         if (lastDragEvent.isDropCompleted()) {
-            LOG.log(Level.WARNING, "Ignored dragOver() after dragDropped()"); //NOI18N
+            log.warn("Ignored dragOver() after dragDropped()"); //NOI18N
         } else {
             dragOverGlassLayerBis();
         }

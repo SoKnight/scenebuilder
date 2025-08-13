@@ -32,49 +32,31 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.user;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.PrintWriter;
+import com.oracle.javafx.scenebuilder.kit.library.BuiltinSectionComparator;
+import com.oracle.javafx.scenebuilder.kit.library.Library;
+import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
+import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
+import javafx.application.Platform;
+import javafx.beans.property.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.*;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import com.oracle.javafx.scenebuilder.kit.library.BuiltinSectionComparator;
-import com.oracle.javafx.scenebuilder.kit.library.Library;
-import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
-import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
-
-import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyBooleanWrapper;
-import javafx.beans.property.ReadOnlyIntegerProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  *
  * 
  */
+@Slf4j
 public class UserLibrary extends Library {
     
     public enum State { READY, WATCHING }
@@ -183,7 +165,7 @@ public class UserLibrary extends Library {
             try {
                 watcherThread.join();
             } catch(InterruptedException e) {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to join watcher thread: ", e);
+                log.warn("Failed to join watcher thread", e);
             } finally {
                 watcher = null;
                 watcherThread = null;
@@ -412,7 +394,7 @@ public class UserLibrary extends Library {
             try {
                 urlClassLoader.close();
             } catch(IOException e) {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to close URL classloader: ", e);
+                log.warn("Failed to close URL classloader", e);
             }
         }
         
