@@ -386,7 +386,13 @@ class LibraryFolderWatcher implements Runnable {
             if (jarReport.getEntries().isEmpty()) {
                 log.debug("- {}", I18N.getString("log.info.explore.no.results"));
             } else {
-                jarReport.getEntries().forEach(entry -> log.info("- {}", entry));
+                jarReport.getEntries().forEach(entry -> {
+                    switch (entry.getStatus()) {
+                        case OK -> log.info("- {}", entry);
+                        case IGNORED -> log.debug("- {}", entry);
+                        default -> log.error("- {}", entry, entry.getException());
+                    }
+                });
             }
 
             log.debug(I18N.getString("log.info.explore.end", currentModuleOrJarOrFolder));

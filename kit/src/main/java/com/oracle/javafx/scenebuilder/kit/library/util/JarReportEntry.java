@@ -106,14 +106,12 @@ public class JarReportEntry {
                 assert klass == null;
                 assert exception != null;
                 sb.append(name);
-                sb.append(" - CANNOT_LOAD - "); //NOI18N
-                sb.append(exception.getMessage());
+                sb.append(" - CANNOT_LOAD"); //NOI18N
                 break;
             case CANNOT_INSTANTIATE:
                 assert klass != null;
                 sb.append(klass.getCanonicalName());
-                sb.append(" - CANNOT_INSTANTIATE - "); //NOI18N
-                sb.append(exception.getMessage());
+                sb.append(" - CANNOT_INSTANTIATE"); //NOI18N
                 break;
             case IGNORED:
                 assert klass == null;
