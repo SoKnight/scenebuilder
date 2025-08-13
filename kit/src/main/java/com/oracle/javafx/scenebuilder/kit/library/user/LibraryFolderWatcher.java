@@ -349,6 +349,7 @@ class LibraryFolderWatcher implements Runnable {
         }
 
         // 2)
+        final List<String> excludedItems = library.getFilter();
         final List<JarReport> moduleOrJarOrFolderReports = new ArrayList<>();
         for (Path currentModuleOrJarOrFolder : modulesOrJarsOrFolders) {
             String jarName = currentModuleOrJarOrFolder.getName(currentModuleOrJarOrFolder.getNameCount() - 1).toString();
@@ -361,19 +362,19 @@ class LibraryFolderWatcher implements Runnable {
             Optional<ModuleReference> moduleReference = LibraryUtil.getModuleReference(currentModuleOrJarOrFolder);
             if (moduleReference.isPresent()) {
                 log.debug(I18N.getString("log.info.explore.module", moduleReference.get().descriptor()));
-                final ModuleExplorer explorer = new ModuleExplorer(moduleReference.get());
+                final ModuleExplorer explorer = new ModuleExplorer(moduleReference.get(), excludedItems);
                 jarReport = explorer.explore();
                 resultText = I18N.getString("log.info.explore.module.results", jarName);
             }
             else if (LibraryUtil.isJarPath(currentModuleOrJarOrFolder)) {
                 log.debug(I18N.getString("log.info.explore.jar", currentModuleOrJarOrFolder));
-                final JarExplorer explorer = new JarExplorer(currentModuleOrJarOrFolder);
+                final JarExplorer explorer = new JarExplorer(currentModuleOrJarOrFolder, excludedItems);
                 jarReport = explorer.explore(classLoader);
                 resultText = I18N.getString("log.info.explore.jar.results", jarName);
             }
             else if (Files.isDirectory(currentModuleOrJarOrFolder)) {
                 log.debug(I18N.getString("log.info.explore.folder", currentModuleOrJarOrFolder));
-                final FolderExplorer explorer = new FolderExplorer(currentModuleOrJarOrFolder);
+                final FolderExplorer explorer = new FolderExplorer(currentModuleOrJarOrFolder, excludedItems);
                 jarReport = explorer.explore(classLoader);
                 resultText = I18N.getString("log.info.explore.folder.results", jarName);
             } else {

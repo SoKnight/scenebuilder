@@ -37,6 +37,7 @@ import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry.Status;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -45,13 +46,15 @@ import java.util.jar.JarFile;
  * 
  */
 public class JarExplorer extends ExplorerBase {
-    
+
+    private final List<String> excludedItems;
     private final Path jar;
     
-    public JarExplorer(Path jar) {
+    public JarExplorer(Path jar, List<String> excludedItems) {
         assert jar != null;
         assert jar.isAbsolute();
-        
+
+        this.excludedItems = excludedItems;
         this.jar = jar;
     }
     
@@ -80,7 +83,7 @@ public class JarExplorer extends ExplorerBase {
             return new JarReportEntry(entry.getName(), JarReportEntry.Status.IGNORED, null, null, null);
         } else {
             String className = makeClassName(entry.getName(), "/");
-            return super.exploreEntry(entry.getName(), classLoader, className);
+            return super.exploreEntry(entry.getName(), classLoader, className, excludedItems);
         }
     }
 

@@ -388,6 +388,7 @@ public class ImportWindowController extends AbstractModalDialog {
             @Override
             protected List<JarReport> call() throws Exception {
                 final List<JarReport> res = new ArrayList<>();
+                final List<String> excludedItems = null;
                 numOfImportedJar = importFiles.size();
                 // The classloader takes in addition all already existing
                 // jar files stored in the user lib dir.
@@ -402,12 +403,12 @@ public class ImportWindowController extends AbstractModalDialog {
                     updateMessage(I18N.getString("import.work.exploring", file.getName()));
 //                    System.out.println("[" + index + "/" + max + "] Exploring file " + file.getName()); //NOI18N
                     if (file.isDirectory()) {
-                        final FolderExplorer explorer = new FolderExplorer(file.toPath());
+                        final FolderExplorer explorer = new FolderExplorer(file.toPath(), alreadyExcludedItems);
                         final JarReport jarReport = explorer.explore(classLoader);
                         res.add(jarReport);
                     }
                     else {
-                        final JarExplorer explorer = new JarExplorer(Paths.get(file.getAbsolutePath()));
+                        final JarExplorer explorer = new JarExplorer(Paths.get(file.getAbsolutePath()), alreadyExcludedItems);
                         final JarReport jarReport = explorer.explore(classLoader);
                         res.add(jarReport);
                     }

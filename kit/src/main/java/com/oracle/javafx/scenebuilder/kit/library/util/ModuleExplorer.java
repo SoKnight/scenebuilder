@@ -37,14 +37,17 @@ import java.io.IOException;
 import java.lang.module.ModuleReader;
 import java.lang.module.ModuleReference;
 import java.nio.file.Path;
+import java.util.List;
 
 public class ModuleExplorer extends ExplorerBase {
 
+    private final List<String> excludedItems;
     private final ModuleReference moduleReference;
     private final Module module;
 
-    public ModuleExplorer(ModuleReference moduleReference) {
+    public ModuleExplorer(ModuleReference moduleReference, List<String> excludedItems) {
         assert moduleReference != null;
+        this.excludedItems = excludedItems;
         this.moduleReference = moduleReference;
         this.module = ModuleLayer.boot().findModule(moduleReference.descriptor().name()).orElseThrow();
     }
@@ -56,7 +59,7 @@ public class ModuleExplorer extends ExplorerBase {
             reader.list().forEach(cl -> {
                 if (cl.endsWith(".class")) {
                     String className = cl.substring(0, cl.length() - ".class".length()).replaceAll("/", ".");
-                    JarReportEntry explored = super.exploreEntry(cl, classLoader, className);
+                    JarReportEntry explored = super.exploreEntry(cl, classLoader, className, excludedItems);
                     if (explored.getStatus() != Status.IGNORED) {
                         result.getEntries().add(explored);
                     }

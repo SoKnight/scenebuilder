@@ -32,22 +32,28 @@
  */
 package com.oracle.javafx.scenebuilder.kit.library.util;
 
+import com.oracle.javafx.scenebuilder.kit.library.LibraryItem;
+import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry.Status;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class FolderExplorer extends ExplorerBase {
 
+    private final List<String> excludedItems;
     private final Path rootFolderPath;
 
-    public FolderExplorer(Path folderPath) {
+    public FolderExplorer(Path folderPath, List<String> excludedItems) {
         assert folderPath != null;
         assert folderPath.isAbsolute();
 
+        this.excludedItems = excludedItems;
         this.rootFolderPath = folderPath;
     }
 
@@ -78,7 +84,7 @@ public class FolderExplorer extends ExplorerBase {
             Path relativepath = rootpath.relativize(path);
 
             String className = makeClassName(relativepath.toString(), File.separator);
-            return super.exploreEntry(file.getName(), classLoader, className);
+            return super.exploreEntry(file.getName(), classLoader, className, excludedItems);
         }
     }
 

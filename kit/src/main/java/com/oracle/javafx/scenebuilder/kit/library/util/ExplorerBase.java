@@ -41,6 +41,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
+import java.util.List;
 
 abstract class ExplorerBase {
 
@@ -79,7 +80,7 @@ abstract class ExplorerBase {
         return result;
     }
 
-    JarReportEntry exploreEntry(String entryName, ClassLoader classLoader, String className) {
+    JarReportEntry exploreEntry(String entryName, ClassLoader classLoader, String className, List<String> excludedItems) {
         JarReportEntry.Status status;
         Throwable entryException;
         Class<?> entryClass = null;
@@ -90,7 +91,8 @@ abstract class ExplorerBase {
                 || className.startsWith("com.oracle.javafx.scenebuilder.") //NOI18N
                 || className.startsWith("com.javafx.")
                 || className.endsWith("module-info")
-                || EditorPlatform.hasClassFromExternalPlugin(className)) { // ignore classes from plugins, they are loaded in their own section
+                || EditorPlatform.hasClassFromExternalPlugin(className) // ignore classes from plugins, they are loaded in their own section
+                || excludedItems.contains(className)) {
             status = JarReportEntry.Status.IGNORED;
             entryClass = null;
             entryException = null;
