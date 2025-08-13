@@ -34,6 +34,7 @@ module com.gluonhq.scenebuilder.app {
     requires static lombok;
 
     requires ch.qos.logback.classic;
+    requires ch.qos.logback.core;
     requires javafx.web;
     requires javafx.fxml;
     requires javafx.media;
@@ -52,6 +53,7 @@ module com.gluonhq.scenebuilder.app {
     opens com.oracle.javafx.scenebuilder.app to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.about to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.i18n to javafx.fxml;
+    opens com.oracle.javafx.scenebuilder.app.logging to ch.qos.logback.core;
     opens com.oracle.javafx.scenebuilder.app.menubar to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.message to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.preferences to javafx.fxml;

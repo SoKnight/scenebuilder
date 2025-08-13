@@ -19,9 +19,7 @@
             <maxIndex>10</maxIndex>
         </rollingPolicy>
 
-        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-            <maxFileSize>1MB</maxFileSize>
-        </triggeringPolicy>
+        <triggeringPolicy class="com.oracle.javafx.scenebuilder.app.logging.RollOncePerSessionTriggeringPolicy"/>
 
         <encoder>
             <pattern>[%date{HH:mm:ss.SSS}] [%-5level] [%logger{0}] %msg%n</pattern>
