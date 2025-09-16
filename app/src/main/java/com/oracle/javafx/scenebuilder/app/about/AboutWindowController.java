@@ -37,6 +37,13 @@ import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
+import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.WindowEvent;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,12 +56,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
-import javafx.stage.WindowEvent;
 
 /**
  *
@@ -198,7 +199,8 @@ public final class AboutWindowController extends AbstractFxmlWindowController {
         sb.append("\n").append(sbBuildInfo).append("\n") //NOI18N
                 .append(I18N.getString("about.build.date", sbBuildDate)).append("\n")
                 .append(I18N.getString("about.build.javafx.version", sbBuildJavaFXVersion)).append("\n")
-                .append(I18N.getString("about.build.java.version", sbBuildJavaVersion))
+                .append(I18N.getString("about.build.java.version", sbBuildJavaVersion)).append("\n")
+                .append("// Patched by SoKnight") //NOI18N
                 .append("\n\n"); //NOI18N
         return sb;
     }

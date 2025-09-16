@@ -38,7 +38,6 @@ import javafx.scene.image.Image;
 import java.net.URL;
 
 import static com.oracle.javafx.scenebuilder.kit.template.Type.DESKTOP;
-import static com.oracle.javafx.scenebuilder.kit.template.Type.PHONE;
 
 public enum Template {
 
@@ -56,30 +55,6 @@ public enum Template {
             "basic_desktop.png",
             "template.title.new.basic.desktop.app",
             "template.description.new.basic.desktop.app"
-    ),
-
-    COMPLEX_DESKTOP_APP(
-            DESKTOP,
-            "ComplexDesktopApplication.fxml",
-            "complex_desktop.png",
-            "template.title.new.complex.desktop.app",
-            "template.description.new.complex.desktop.app"
-    ),
-
-    EMPTY_PHONE_APP(
-            PHONE,
-            "EmptyPhoneApplication.fxml",
-            "empty_mobile.png",
-            "template.title.new.empty.phone.app",
-            "template.description.new.empty.phone.app"
-    ),
-
-    BASIC_PHONE_APP(
-            PHONE,
-            "BasicPhoneApplication.fxml",
-            "basic_mobile.png",
-            "template.title.new.basic.phone.app",
-            "template.description.new.basic.phone.app"
     );
 
     private Type type;

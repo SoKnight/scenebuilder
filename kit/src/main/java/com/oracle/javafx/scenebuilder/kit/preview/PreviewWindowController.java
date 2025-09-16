@@ -487,23 +487,8 @@ public final class PreviewWindowController extends AbstractWindowController {
         double res = WIDTH_WHEN_EMPTY;
 
         switch (size) {
-            case SIZE_335x600:
-                res = 335.0;
-                break;
-            case SIZE_900x600:
-                res = 900.0;
-                break;
-            case SIZE_1280x800:
-                res = 1280.0;
-                break;
             case SIZE_1920x1080:
                 res = 1920.0;
-                break;
-            case SIZE_320x240:
-                res = 320.0;
-                break;
-            case SIZE_640x480:
-                res = 640.0;
                 break;
             case SIZE_PREFERRED:
                 res = getRoot().prefWidth(-1);
@@ -519,23 +504,8 @@ public final class PreviewWindowController extends AbstractWindowController {
         double res = HEIGHT_WHEN_EMPTY;
 
         switch (size) {
-            case SIZE_335x600:
-                res = 600.0;
-                break;
-            case SIZE_900x600:
-                res = 600.0;
-                break;
-            case SIZE_1280x800:
-                res = 800.0;
-                break;
             case SIZE_1920x1080:
                 res = 1080.0;
-                break;
-            case SIZE_320x240:
-                res = 240.0;
-                break;
-            case SIZE_640x480:
-                res = 480.0;
                 break;
             case SIZE_PREFERRED:
                 res = getRoot().prefHeight(-1);

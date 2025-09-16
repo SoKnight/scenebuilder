@@ -34,26 +34,14 @@ package com.oracle.javafx.scenebuilder.app.util;
 
 import com.oracle.javafx.scenebuilder.app.SceneBuilderApp;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
-
-import javafx.concurrent.Task;
-import javafx.scene.control.Alert;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
-import jakarta.json.JsonReaderFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Properties;
-import java.util.function.Consumer;
 
 @Slf4j
 public class AppSettings {
@@ -61,20 +49,7 @@ public class AppSettings {
     public static final String APP_ICON_16 = SceneBuilderApp.class.getResource("SceneBuilderLogo_16.png").toString();
     public static final String APP_ICON_32 = SceneBuilderApp.class.getResource("SceneBuilderLogo_32.png").toString();
 
-    public static final String LATEST_VERSION_CHECK_URL = "http://download.gluonhq.com/scenebuilder/settings.properties";
-    public static final String LATEST_VERSION_NUMBER_PROPERTY = "latestversion";
-
-    public static final String LATEST_VERSION_INFORMATION_URL = "http://download.gluonhq.com/scenebuilder/version.json";
-
-    public static final String DOWNLOAD_URL = "https://gluonhq.com/products/scene-builder/";
-
     private static String sceneBuilderVersion;
-    private static String latestVersion;
-
-    private static String latestVersionText;
-    private static String latestVersionAnnouncementURL;
-
-    private static final JsonReaderFactory readerFactory = Json.createReaderFactory(null);
 
     static {
         initSceneBuilderVersion();
@@ -92,9 +67,6 @@ public class AppSettings {
         }
     }
 
-    public static void setWindowIcon(Alert alert) {
-        setWindowIcon((Stage)alert.getDialogPane().getScene().getWindow());
-    }
     public static void setWindowIcon(Stage stage) {
         Image icon16 = new Image(AppSettings.APP_ICON_16);
         Image icon32 = new Image(AppSettings.APP_ICON_32);
@@ -120,87 +92,11 @@ public class AppSettings {
         return false;
     }
 
-    public static void getLatestVersion(Consumer<String> consumer) {
-        if (latestVersion == null) {
-            var fetchTask = createFetchTask(consumer);
-            new Thread(fetchTask, "GetLatestVersion").start();
-        } else {
-            consumer.accept(latestVersion);
-        }
-    }
-
-    private static final Task<String> createFetchTask(Consumer<String> consumer) {
-        return new Task<String>() {
-            @Override
-            protected String call() throws Exception {
-                log.debug("Fetching latest Scenebuilder version from: '{}'", LATEST_VERSION_CHECK_URL);
-                Properties prop = new Properties();
-                String onlineVersionNumber = null;
-
-                URL url = null;
-                try {
-                    url = new URL(LATEST_VERSION_CHECK_URL);
-                } catch (MalformedURLException e) {
-                    log.warn("Failed to construct version check URL", e);
-                }
-
-                try (InputStream inputStream = url.openStream()) {
-                    prop.load(inputStream);
-                    onlineVersionNumber = prop.getProperty(LATEST_VERSION_NUMBER_PROPERTY);
-
-                } catch (IOException e) {
-                    log.warn("Failed to load latest version number property", e);
-                }
-                return onlineVersionNumber;
-            }
-
-            protected void succeeded() { 
-                String fetchedVersion = getValue();
-                log.info("Latest online available version is: {}", fetchedVersion);
-                consumer.accept(fetchedVersion);
-                latestVersion = fetchedVersion;
-            }
-        };
-    }
-
-    public static String getLatestVersionText() {
-        if (latestVersionText == null) {
-            updateLatestVersionInfo();
-        }
-        return latestVersionText;
-    }
-
-    private static void updateLatestVersionInfo() {
-        try {
-            URL url = new URL(LATEST_VERSION_INFORMATION_URL);
-
-            try (JsonReader reader = readerFactory.createReader(new InputStreamReader(url.openStream()))) {
-                JsonObject object = reader.readObject();
-                JsonObject announcementObject = object.getJsonObject("announcement");
-                latestVersionText = announcementObject.getString("text");
-                latestVersionAnnouncementURL = announcementObject.getString("url");
-            } catch (IOException e) {
-                log.warn("Failed to read latest version json", e);
-            }
-        } catch (MalformedURLException e) {
-            log.warn("Failed to construct latest version info URL", e);
-        }
-    }
-
-    public static String getLatestVersionAnnouncementURL() {
-        if (latestVersionAnnouncementURL == null) {
-            updateLatestVersionInfo();
-        }
-        return latestVersionAnnouncementURL;
-    }
-
     public static String getUserM2Repository() {
         String m2Path = System.getProperty("user.home") + File.separator +
                 ".m2" + File.separator + "repository"; //NOI18N
 
         // TODO: Allow custom path for .m2
-
-        assert m2Path != null;
 
         return m2Path;
     }

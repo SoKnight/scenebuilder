@@ -91,36 +91,9 @@ public class EditorPlatform {
     public record Theme(String name, String value, String... stylesheetURLs) {
 
         private static final String MODENA_PATH = "com/sun/javafx/scene/control/skin/modena/";
-        private static final String CASPIAN_PATH = "com/sun/javafx/scene/control/skin/caspian/";
 
         public static final Theme MODENA =
             new Theme("MODENA", I18N.getString("title.theme.modena"), MODENA_PATH + "modena.css");
-        public static final Theme MODENA_TOUCH =
-            new Theme("MODENA_TOUCH", I18N.getString("title.theme.modena_touch"), MODENA_PATH + "modena.css", MODENA_PATH + "touch.css");
-        public static final Theme MODENA_HIGH_CONTRAST_BLACK_ON_WHITE =
-            new Theme("MODENA_HIGH_CONTRAST_BLACK_ON_WHITE", I18N.getString("title.theme.modena_high_contrast_black_on_white"), MODENA_PATH + "modena.css", MODENA_PATH + "blackOnWhite.css");
-        public static final Theme MODENA_HIGH_CONTRAST_WHITE_ON_BLACK =
-            new Theme("MODENA_HIGH_CONTRAST_WHITE_ON_BLACK", I18N.getString("title.theme.modena_high_contrast_white_on_black"), MODENA_PATH + "modena.css", MODENA_PATH + "whiteOnBlack.css");
-        public static final Theme MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK =
-            new Theme("MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK", I18N.getString("title.theme.modena_high_contrast_yellow_on_black"), MODENA_PATH + "modena.css", MODENA_PATH + "yellowOnBlack.css");
-        public static final Theme MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE =
-            new Theme("MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE", I18N.getString("title.theme.modena_touch_high_contrast_black_on_white"), MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "blackOnWhite.css");
-        public static final Theme MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK =
-            new Theme("MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK", I18N.getString("title.theme.modena_touch_high_contrast_white_on_black"), MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "whiteOnBlack.css");
-        public static final Theme MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK =
-            new Theme("MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK", I18N.getString("title.theme.modena_touch_high_contrast_yellow_on_black"), MODENA_PATH + "modena.css", MODENA_PATH + "touch.css", MODENA_PATH + "yellowOnBlack.css");
-        public static final Theme CASPIAN =
-            new Theme("CASPIAN", I18N.getString("title.theme.caspian"), CASPIAN_PATH + "caspian.css");
-        public static final Theme CASPIAN_HIGH_CONTRAST =
-            new Theme("CASPIAN_HIGH_CONTRAST", I18N.getString("title.theme.caspian_high_contrast"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "highcontrast.css");
-        public static final Theme CASPIAN_EMBEDDED =
-            new Theme("CASPIAN_EMBEDDED", I18N.getString("title.theme.caspian_embedded"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css");
-        public static final Theme CASPIAN_EMBEDDED_HIGH_CONTRAST =
-            new Theme("CASPIAN_EMBEDDED_HIGH_CONTRAST", I18N.getString("title.theme.caspian_embedded_high_contrast"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "highcontrast.css");
-        public static final Theme CASPIAN_EMBEDDED_QVGA =
-            new Theme("CASPIAN_EMBEDDED_QVGA", I18N.getString("title.theme.caspian_embedded_qvga"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css");
-        public static final Theme CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST =
-            new Theme("CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST", I18N.getString("title.theme.caspian_embedded_qvga_high_contrast"), CASPIAN_PATH + "caspian.css", CASPIAN_PATH + "embedded.css", CASPIAN_PATH + "embedded-qvga.css", CASPIAN_PATH + "highcontrast.css");
 
         @Override
         public String toString() {
@@ -132,11 +105,8 @@ public class EditorPlatform {
         }
 
         public static List<Theme> getThemeList() {
-            List<Theme> themeList = new ArrayList<>(List.of(Theme.MODENA, Theme.MODENA_TOUCH, Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE,
-                Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK, Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK, Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE,
-                Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK, Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK,
-                Theme.CASPIAN, Theme.CASPIAN_EMBEDDED, Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST, Theme.CASPIAN_EMBEDDED_QVGA, Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST));
-            themeList.addAll(0, getExternalThemes());
+            List<Theme> themeList = new ArrayList<>(getExternalThemes());
+            themeList.add(Theme.MODENA);
             return themeList;
         }
 
@@ -164,41 +134,6 @@ public class EditorPlatform {
 
     public static boolean isModena(Theme theme) {
         return theme.toString().startsWith("MODENA");
-    }
-    
-    public static boolean isModenaBlackOnWhite(Theme theme) {
-        return isModena(theme)
-                && theme.toString().contains("BLACK_ON_WHITE");
-    }
-    
-    public static boolean isModenaWhiteOnBlack(Theme theme) {
-        return isModena(theme)
-                && theme.toString().contains("WHITE_ON_BLACK");
-    }
-    
-    public static boolean isModenaYellowOnBlack(Theme theme) {
-        return isModena(theme)
-                && theme.toString().contains("YELLOW_ON_BLACK");
-    }
-    
-    public static boolean isModenaHighContrast(Theme theme) {
-        return isModena(theme)
-                && theme.toString().contains("HIGH_CONTRAST");
-    }
-    
-    public static boolean isModenaTouch(Theme theme) {
-        return isModena(theme)
-                && theme.toString().contains("TOUCH");
-    }
-    
-    public static boolean isModenaTouchHighContrast(Theme theme) {
-        return isModena(theme)
-                && theme.toString().contains("HIGH_CONTRAST")
-                && theme.toString().contains("TOUCH");
-    }
-    
-    public static boolean isCaspian(Theme theme) {
-        return theme.toString().startsWith("CASPIAN");
     }
 
     /**

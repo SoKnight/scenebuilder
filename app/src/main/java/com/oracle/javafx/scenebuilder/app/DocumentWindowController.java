@@ -32,8 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-import com.gluonhq.scenebuilder.plugins.alert.WarnThemeAlert;
-import com.gluonhq.scenebuilder.plugins.editor.GluonEditorController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
 import com.oracle.javafx.scenebuilder.app.message.MessageBarController;
@@ -43,6 +41,7 @@ import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
+import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
@@ -397,10 +396,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         updateStageTitle(); // No-op if fxml has not been loaded yet
         updateFromDocumentPreferences(true);
         watchingController.update();
-
-        if (editorController.getFxomDocument().hasControlsFromExternalPlugin()) {
-            WarnThemeAlert.showAlertIfRequired(getStage(), editorController.getTheme(), editorController::setTheme);
-        }
     }
     
     public void loadFromURL(URL fxmlURL, boolean refreshThemeFromDocumentPreferences) {
@@ -547,14 +542,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     public void refreshTheme(PreferencesRecordGlobal preferencesRecordGlobal) {
         final EditorController ec = getEditorController();
         ec.setTheme(preferencesRecordGlobal.getTheme());
-    }
-
-    public void refreshSwatch(PreferencesRecordGlobal preferencesRecordGlobal) {
-        GluonEditorController.getInstance().setGluonSwatch(preferencesRecordGlobal.getSwatch());
-    }
-
-    public void refreshGluonTheme(PreferencesRecordGlobal preferencesRecordGlobal) {
-        GluonEditorController.getInstance().setGluonTheme(preferencesRecordGlobal.getGluonTheme());
     }
 
     public void refreshAccordionAnimation(PreferencesRecordGlobal preferencesRecordGlobal) {
@@ -1871,8 +1858,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         refreshRootContainerWidth(recordGlobal);
         if (refreshTheme) {
             refreshTheme(recordGlobal);
-            refreshSwatch(recordGlobal);
-            refreshGluonTheme(recordGlobal);
         }
         refreshAccordionAnimation(recordGlobal);
     }

@@ -81,20 +81,7 @@ public class CssInternal {
 
     private final static List<String> themeUrls;
     static {
-        themeUrls = new ArrayList<>(Theme.CASPIAN_EMBEDDED_HIGH_CONTRAST.getStylesheetURLs());
-        themeUrls.addAll(Theme.CASPIAN_EMBEDDED_QVGA_HIGH_CONTRAST.getStylesheetURLs());
-        themeUrls.addAll(Theme.CASPIAN_EMBEDDED_QVGA.getStylesheetURLs());
-        themeUrls.addAll(Theme.CASPIAN_EMBEDDED.getStylesheetURLs());
-        themeUrls.addAll(Theme.CASPIAN_HIGH_CONTRAST.getStylesheetURLs());
-        themeUrls.addAll(Theme.CASPIAN.getStylesheetURLs());
-        themeUrls.addAll(Theme.MODENA_HIGH_CONTRAST_BLACK_ON_WHITE.getStylesheetURLs());
-        themeUrls.addAll(Theme.MODENA_HIGH_CONTRAST_WHITE_ON_BLACK.getStylesheetURLs());
-        themeUrls.addAll(Theme.MODENA_HIGH_CONTRAST_YELLOW_ON_BLACK.getStylesheetURLs());
-        themeUrls.addAll(Theme.MODENA.getStylesheetURLs());
-        themeUrls.addAll(Theme.MODENA_TOUCH_HIGH_CONTRAST_BLACK_ON_WHITE.getStylesheetURLs());
-        themeUrls.addAll(Theme.MODENA_TOUCH_HIGH_CONTRAST_WHITE_ON_BLACK.getStylesheetURLs());
-        themeUrls.addAll(Theme.MODENA_TOUCH_HIGH_CONTRAST_YELLOW_ON_BLACK.getStylesheetURLs());
-        themeUrls.addAll(Theme.MODENA_TOUCH.getStylesheetURLs());
+        themeUrls = new ArrayList<>(Theme.MODENA.getStylesheetURLs());
     }
 
     /**
@@ -107,11 +94,6 @@ public class CssInternal {
         return isThemeRule(style.getDeclaration().getRule());
     }
 
-    public static boolean isCaspianTheme(Style style) {
-        return style.getDeclaration().getRule().getStylesheet().getUrl()
-                .endsWith(Theme.CASPIAN.getStylesheetURLs().getFirst());
-    }
-
     public static boolean isModenaTheme(Style style) {
         return style.getDeclaration().getRule().getStylesheet().getUrl()
                 .endsWith(Theme.MODENA.getStylesheetURLs().getFirst());
@@ -122,15 +104,11 @@ public class CssInternal {
         String url = style.getDeclaration().getRule().getStylesheet().getUrl();
         if (url.contains("modena")) {//NOI18N
             themeName += "modena/"; //NOI18N
-        } else if (url.contains("caspian")) {//NOI18N
-            themeName += "caspian/"; //NOI18N
         }
         File file = new File(url);
         themeName += file.getName().replace(".bss", ".css");//NOI18N
         if (themeName.endsWith("modena.css")) {//NOI18N
             themeName = "modena.css";//NOI18N
-        } else if (themeName.endsWith("caspian.css")) {//NOI18N
-            themeName = "caspian.css";//NOI18N
         }
         return themeName;
     }

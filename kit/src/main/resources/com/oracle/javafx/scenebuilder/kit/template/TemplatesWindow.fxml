@@ -74,22 +74,6 @@
                         <Insets />
                      </VBox.margin>
                   </FlowPane>
-                  <Label layoutX="80.0" layoutY="30.0" text="%template.title.header.phone" textFill="#f68a1f">
-                     <font>
-                        <Font size="30.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </Label>
-                  <FlowPane fx:id="mobilePane" hgap="115.0" prefHeight="200.0" prefWidth="200.0" vgap="20.0">
-                     <padding>
-                        <Insets left="-15.0" />
-                     </padding>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </FlowPane>
                </children>
                <padding>
                   <Insets bottom="40.0" left="70.0" top="20.0" />

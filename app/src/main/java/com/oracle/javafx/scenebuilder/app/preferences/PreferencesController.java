@@ -86,9 +86,6 @@ public class PreferencesController extends PreferencesControllerBase {
     static final String BOTTOM_DIVIDER_VPOS = "bottomDividerVPos"; //NOI18N
     static final String LEFT_DIVIDER_VPOS = "leftDividerVPos"; //NOI18N
 
-    static final String GLUON_SWATCH = "gluonSwatch";
-    static final String GLUON_THEME = "gluonTheme";
-
     private static PreferencesController singleton;
 
     /***************************************************************************

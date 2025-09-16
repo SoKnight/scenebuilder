@@ -32,7 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.app;
 
-import com.gluonhq.scenebuilder.plugins.editor.GluonEditorPlatform;
 import com.oracle.javafx.scenebuilder.app.DocumentWindowController.ActionStatus;
 import com.oracle.javafx.scenebuilder.app.about.AboutWindowController;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
@@ -40,12 +39,10 @@ import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesWindowController;
-import com.oracle.javafx.scenebuilder.app.registration.RegistrationWindowController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.app.welcomedialog.WelcomeDialogWindowController;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
-import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AlertDialog;
@@ -57,7 +54,6 @@ import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
 import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesWindowController;
-import com.oracle.javafx.scenebuilder.kit.template.Type;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPicker;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -69,7 +65,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -81,14 +76,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -101,8 +90,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
 
     public enum ApplicationControlAction {
         ABOUT,
-        CHECK_UPDATES,
-        REGISTER,
         NEW_FILE,
         NEW_TEMPLATE,
         OPEN_FILE,
@@ -163,15 +150,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                 AppSettings.setWindowIcon(aboutWindowController.getStage());
                 break;
 
-            case REGISTER:
-                final RegistrationWindowController registrationWindowController = new RegistrationWindowController(source.getStage());
-                registrationWindowController.openWindow();
-                break;
-
-            case CHECK_UPDATES:
-                checkUpdates(source);
-                break;
-
             case NEW_FILE:
                 final DocumentWindowController newWindow = makeNewWindow();
                 newWindow.updateWithDefaultContent();
@@ -223,8 +201,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
         final boolean result;
         switch (a) {
             case ABOUT:
-            case REGISTER:
-            case CHECK_UPDATES:
             case NEW_FILE:
             case NEW_TEMPLATE:
             case OPEN_FILE:
@@ -639,13 +615,7 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void loadTemplateInWindow(Template template, DocumentWindowController documentWindowController) {
-        documentWindowController.loadFromURL(template.getFXMLURL(), template.getType() != Type.PHONE);
-
-        if (template.getType() == Type.PHONE) {
-            documentWindowController.getEditorController().performEditAction(EditorController.EditAction.SET_SIZE_335x600);
-            documentWindowController.getEditorController().setTheme(GluonEditorPlatform.GLUON_MOBILE_LIGHT);
-        }
-
+        documentWindowController.loadFromURL(template.getFXMLURL(), true);
         documentWindowController.openWindow();
     }
 
@@ -909,106 +879,6 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
                         break;
                 }
                 break;
-        }
-    }
-
-    private void showUpdateDialogIfRequired(DocumentWindowController dwc) {
-        AppSettings.getLatestVersion(latestVersion -> {
-            if (latestVersion == null) {
-                // This can be because the url was not reachable so we don't show the update dialog.
-                return;
-            }
-            try {
-                boolean showUpdateDialog = true;
-                if (AppSettings.getSceneBuilderVersion().contains("SNAPSHOT")) {
-                    showUpdateDialog = false;
-                } else if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
-                    PreferencesController pc = PreferencesController.getSingleton();
-                    PreferencesRecordGlobal recordGlobal = pc.getRecordGlobal();
-
-                    if (isVersionToBeIgnored(recordGlobal, latestVersion)) {
-                        showUpdateDialog = false;
-                    }
-
-                    if (!isUpdateDialogDateReached(recordGlobal)) {
-                        showUpdateDialog = false;
-                    }
-                } else {
-                    showUpdateDialog = false;
-                }
-
-                if (showUpdateDialog) {
-                    String latestVersionText = AppSettings.getLatestVersionText();
-                    String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
-                    Platform.runLater(() -> {
-                        UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
-                                latestVersionAnnouncementURL, dwc.getStage());
-                        dialog.showAndWait();
-                    });
-                }
-            } catch (NumberFormatException ex) {
-                Platform.runLater(() -> showVersionNumberFormatError(dwc));
-            }
-        });
-    }
-
-    private void checkUpdates(DocumentWindowController source) {
-        AppSettings.getLatestVersion(latestVersion -> {
-            if (latestVersion == null) {
-                Platform.runLater(() -> {
-                    SBAlert alert = new SBAlert(Alert.AlertType.ERROR, getFrontDocumentWindow().getStage());
-                    alert.setTitle(I18N.getString("check_for_updates.alert.error.title"));
-                    alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-                    alert.setContentText(I18N.getString("check_for_updates.alert.error.message"));
-                    alert.showAndWait();
-                });
-            } else {
-                try {
-                    if (AppSettings.isCurrentVersionLowerThan(latestVersion)) {
-                        String latestVersionText = AppSettings.getLatestVersionText();
-                        String latestVersionAnnouncementURL = AppSettings.getLatestVersionAnnouncementURL();
-                        Platform.runLater(() -> {
-                            UpdateSceneBuilderDialog dialog = new UpdateSceneBuilderDialog(latestVersion, latestVersionText,
-                                    latestVersionAnnouncementURL, source.getStage());
-                            dialog.showAndWait();
-                        });
-                    } else {
-                        SBAlert alert = new SBAlert(Alert.AlertType.INFORMATION, getFrontDocumentWindow().getStage());
-                        alert.setTitle(I18N.getString("check_for_updates.alert.up_to_date.title"));
-                        alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-                        alert.setContentText(I18N.getString("check_for_updates.alert.up_to_date.message"));
-                        alert.showAndWait();
-                    }
-                } catch (NumberFormatException ex) {
-                    Platform.runLater(() -> showVersionNumberFormatError(source));
-                }
-            }
-        });
-    }
-
-    private void showVersionNumberFormatError(DocumentWindowController dwc) {
-        SBAlert alert = new SBAlert(Alert.AlertType.ERROR, dwc.getStage());
-        // The version number format is not supported and this is most probably only happening
-        // in development so we don't localize the strings
-        alert.setTitle("Error");
-        alert.setHeaderText(I18N.getString("check_for_updates.alert.headertext"));
-        alert.setContentText("Update check is disabled in development environment.");
-        alert.showAndWait();
-    }
-
-    private boolean isVersionToBeIgnored(PreferencesRecordGlobal recordGlobal, String latestVersion) {
-        String ignoreVersion = recordGlobal.getIgnoreVersion();
-        return latestVersion.equals(ignoreVersion);
-    }
-
-    private boolean isUpdateDialogDateReached(PreferencesRecordGlobal recordGlobal) {
-        LocalDate dialogDate = recordGlobal.getShowUpdateDialogDate();
-        if (dialogDate == null) {
-            return true;
-        } else if (dialogDate.isBefore(LocalDate.now())) {
-            return true;
-        } else {
-            return false;
         }
     }
 

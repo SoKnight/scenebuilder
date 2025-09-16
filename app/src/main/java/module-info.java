@@ -40,7 +40,6 @@ module com.gluonhq.scenebuilder.app {
     requires javafx.media;
     requires javafx.swing;
     requires transitive com.gluonhq.scenebuilder.kit;
-    requires transitive com.gluonhq.scenebuilder.gluon.plugin;
     requires java.prefs;
     requires jakarta.json;
     requires org.apache.maven.resolver;

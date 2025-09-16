@@ -32,7 +32,6 @@
  */
 package com.oracle.javafx.scenebuilder.app.preferences;
 
-import com.gluonhq.scenebuilder.plugins.editor.GluonEditorPlatform;
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.ToolTheme;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
@@ -104,11 +103,6 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     static final boolean DEFAULT_WILDCARD_IMPORTS = false;
     static final boolean DEFAULT_ALTERNATE_TEXT_INPUT_PASTE = EditorPlatform.IS_MAC;
 
-    static final EditorPlatform.Theme DEFAULT_GLUON_SWATCH = GluonEditorPlatform.DEFAULT_GLUON_SWATCH;
-    static final EditorPlatform.Theme DEFAULT_GLUON_THEME = GluonEditorPlatform.DEFAULT_GLUON_THEME;
-
-    private EditorPlatform.Theme gluonSwatch = DEFAULT_GLUON_SWATCH;
-    private EditorPlatform.Theme gluonTheme = DEFAULT_GLUON_THEME;
     /***************************************************************************
      *                                                                         *
      * Instance fields                                                         *
@@ -162,14 +156,6 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
     public void setToolTheme(ToolTheme value) {
         toolTheme = value;
     }
-
-    public EditorPlatform.Theme getSwatch() { return gluonSwatch; }
-
-    public void setSwatch(EditorPlatform.Theme swatch) { this.gluonSwatch = swatch; }
-
-    public EditorPlatform.Theme getGluonTheme() { return gluonTheme; }
-
-    public void setGluonTheme(EditorPlatform.Theme theme) { this.gluonTheme = theme; }
     
     public DISPLAY_MODE getLibraryDisplayOption() {
         return libraryDisplayOption;
@@ -425,12 +411,6 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
             setRootContainerWidth(DEFAULT_ROOT_CONTAINER_WIDTH);
         }
 
-        // Gluon themes
-        String swatchName = applicationRootPreferences.get(PreferencesController.GLUON_SWATCH, DEFAULT_GLUON_SWATCH.name());
-        gluonSwatch = GluonEditorPlatform.swatchValueOf(swatchName);
-        String gluonThemeName = applicationRootPreferences.get(PreferencesController.GLUON_THEME, DEFAULT_GLUON_THEME.name());
-        gluonTheme = EditorPlatform.Theme.valueOf(gluonThemeName);
-
         // Tool Theme
         final String tool_theme = applicationRootPreferences.get(TOOL_THEME,
                 DEFAULT_TOOL_THEME.name());
@@ -514,12 +494,6 @@ public class PreferencesRecordGlobal extends PreferencesRecordGlobalBase {
         switch (key) {
             case TOOL_THEME:
                 applicationRootPreferences.put(TOOL_THEME, getToolTheme().name());
-                break;
-            case PreferencesController.GLUON_SWATCH:
-                applicationRootPreferences.put(PreferencesController.GLUON_SWATCH, getSwatch().name());
-                break;
-            case PreferencesController.GLUON_THEME:
-                applicationRootPreferences.put(PreferencesController.GLUON_THEME, getGluonTheme().name());
                 break;
             case PreferencesControllerBase.LIBRARY_DISPLAY_OPTION:
                 applicationRootPreferences.put(PreferencesControllerBase.LIBRARY_DISPLAY_OPTION, getLibraryDisplayOption().name());
