@@ -34,14 +34,12 @@ package com.oracle.javafx.scenebuilder.app;
 
 import com.oracle.javafx.scenebuilder.app.i18n.I18N;
 import com.oracle.javafx.scenebuilder.app.menubar.MenuBarController;
-import com.oracle.javafx.scenebuilder.app.message.MessageBarController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesController;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordDocument;
 import com.oracle.javafx.scenebuilder.app.preferences.PreferencesRecordGlobal;
 import com.oracle.javafx.scenebuilder.app.report.JarAnalysisReportController;
 import com.oracle.javafx.scenebuilder.app.util.AppSettings;
 import com.oracle.javafx.scenebuilder.kit.ResourceUtils;
-import com.oracle.javafx.scenebuilder.kit.alert.SBAlert;
 import com.oracle.javafx.scenebuilder.kit.editor.DocumentationUrls;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController.ControlAction;
@@ -183,7 +181,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     private final LibraryPanelController libraryPanelController = new LibraryPanelController(editorController,
             PreferencesController.getSingleton().getMavenPreferences());
     private final SelectionBarController selectionBarController = new SelectionBarController(editorController);
-    private final MessageBarController messageBarController = new MessageBarController(editorController);
     private final SearchController librarySearchController = new SearchController(editorController);
     private final SearchController inspectorSearchController = new SearchController(editorController);
     private final SearchController cssPanelSearchController = new SearchController(editorController);;
@@ -1121,10 +1118,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         contentPanelHost.getChildren().add(contentPanelController.getPanelRoot());
         inspectorPanelHost.getChildren().add(inspectorPanelController.getPanelRoot());
         inspectorSearchPanelHost.getChildren().add(inspectorSearchController.getPanelRoot());
-        messageBarHost.getChildren().add(messageBarController.getPanelRoot());
-        
-        messageBarController.getSelectionBarHost().getChildren().add(
-                selectionBarController.getPanelRoot());
         
         inspectorSearchController.textProperty().addListener((ChangeListener<String>) (ov, oldStr, newStr) -> inspectorPanelController.setSearchPattern(newStr));
         
@@ -1142,10 +1135,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         });
         
         documentAccordion.setExpandedPane(documentAccordion.getPanes().get(0));
-        
-        // Monitor the status of the document to set status icon accordingly in message bar
-        getEditorController().getJobManager().revisionProperty().addListener((ChangeListener<Number>) (ov, t, t1) -> messageBarController.setDocumentDirty(isDocumentDirty()));
-        
+
         // Setup title of the Library Reveal menu item according the underlying o/s.
         final String revealMenuKey;
         if (EditorPlatform.IS_MAC) {
@@ -1878,7 +1868,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
         }
         
         if (result.equals(ActionStatus.DONE)) {
-            messageBarController.setDocumentDirty(false);
             saveJob = getEditorController().getJobManager().getCurrentJob();
         }
         
@@ -2062,7 +2051,6 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
                     // Now performs a regular save action
                     result = performSaveAction();
                     if (result.equals(ActionStatus.DONE)) {
-                        messageBarController.setDocumentDirty(false);
                         saveJob = getEditorController().getJobManager().getCurrentJob();
                     }
                     

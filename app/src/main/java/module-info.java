@@ -54,9 +54,7 @@ module com.gluonhq.scenebuilder.app {
     opens com.oracle.javafx.scenebuilder.app.i18n to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.logging to ch.qos.logback.core;
     opens com.oracle.javafx.scenebuilder.app.menubar to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.message to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.preferences to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.app.registration to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.report to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.util to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.app.welcomedialog;
