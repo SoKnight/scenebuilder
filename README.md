@@ -13,10 +13,7 @@
 Gluon [Scene Builder](http://gluonhq.com/products/scene-builder/) is a drag and drop UI designer tool allowing rapid desktop and mobile app development.
 Scene Builder separates design from logic, allowing team members to quickly and easily focus on their specific aspect of application development.
 
-Scene Builder works with the JavaFX ecosystem – official controls, community projects, and Gluon offerings including
-[Gluon Mobile](http://gluonhq.com/products/mobile),
-[Gluon Desktop](http://gluonhq.com/products/desktop), and
-[Gluon CloudLink](http://gluonhq.com/products/cloudlink).
+Scene Builder works with the JavaFX ecosystem – official controls and community projects.
 
 Scene Builder is open source, and it is freely licensed under the BSD license.
 [Gluon](http://gluonhq.com) can provide [custom consultancy](http://gluonhq.com/services/consulting/), [training](http://gluonhq.com/services/training/), and open source [commercial support](http://gluonhq.com/services/commercial-support/).
@@ -90,11 +87,10 @@ com.oracle.javafx.scenebuilder.app.SceneBuilderApp
 
 ## Scene Builder components ##
 
-The Scene Builder project has three main components defined by three modules (that is, three Java modules defined in three Maven modules subprojects):
+The Scene Builder project has three main components defined by two modules (that is, two Java modules defined in two Maven modules subprojects):
 
 - Scene Builder App
 - Scene Builder Kit
-- Gluon plugin
 
 ### Scene Builder App ###
 
@@ -124,12 +120,6 @@ If you want to build and install the Scene Builder Kit in your local repository,
 
 `./mvnw clean install -f kit`
 
-### Gluon plugin ###
-
-The Gluon section in the Library allows adding [Gluon Mobile](http://gluonhq.com/products/mobile) controls to the FXML layout, and setting the stylesheets from the Gluon themes and swatch colors.
-
-An easy way to get started is by selecting the Mobile Basic Screen from the available templates in the welcome dialog.
-
 ## Code Style
 
 To ensure that new code formatting matches the requirements for Pull Requests,
@@ -148,6 +138,5 @@ There will be a report for each sub-project:
 
 * Kit: `kit/target/reports/checkstyle.html`
 * App: `app/target/reports/checkstyle.html`
-* Gluon-plugin: `gluon-plugin/target/reports/checkstyle.html`
 
 This project makes use of [EditorConfig](https://editorconfig.org/) which is [directly supported](https://editorconfig.org/#pre-installed) by IntelliJ IDEA. There are plugins for NetBeans, Eclipse and Visual Studio and [more](https://editorconfig.org/#download). EditorConfig ensures via configuration in `.editorconfig` file, that the proper indentation is used.
