@@ -51,7 +51,6 @@ import com.oracle.javafx.scenebuilder.kit.library.BuiltinLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
 import com.oracle.javafx.scenebuilder.kit.metadata.Metadata;
-import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.template.Template;
 import com.oracle.javafx.scenebuilder.kit.template.TemplatesWindowController;
 import com.oracle.javafx.scenebuilder.kit.util.control.effectpicker.EffectPicker;
@@ -393,11 +392,8 @@ public class SceneBuilderApp extends Application implements AppPlatform.AppNotif
     }
 
     private void setUpUserLibrary(boolean showWelcomeDialog) {
-        MavenPreferences mavenPreferences = PreferencesController.getSingleton().getMavenPreferences();
         // Creates the user library
-        userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder(),
-                () -> mavenPreferences.getArtifactsPathsWithDependencies(),
-                () -> mavenPreferences.getArtifactsFilter());
+        userLibrary = new UserLibrary(AppPlatform.getUserLibraryFolder());
 
         userLibrary.setOnUpdatedJarReports(jarReports -> {
             boolean shouldShowImportGluonJarAlert = false;

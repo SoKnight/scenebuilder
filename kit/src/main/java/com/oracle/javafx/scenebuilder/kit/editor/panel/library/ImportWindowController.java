@@ -44,7 +44,6 @@ import com.oracle.javafx.scenebuilder.kit.library.util.FolderExplorer;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarExplorer;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReport;
 import com.oracle.javafx.scenebuilder.kit.library.util.JarReportEntry;
-import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -112,8 +111,6 @@ public class ImportWindowController extends AbstractModalDialog {
     // items we retain from older import actions.
     private List<String> alreadyExcludedItems = new ArrayList<>();
     private final List<String> artifactsFilter;
-
-    private final MavenPreferences mavenPreferences;
     
     @FXML
     private VBox leftHandSidePart;
@@ -152,11 +149,11 @@ public class ImportWindowController extends AbstractModalDialog {
     ToggleButton checkAllUncheckAllToggle;
 
     
-    public ImportWindowController(LibraryPanelController lpc, List<File> files, MavenPreferences mavenPreferences, Stage owner) {
-        this(lpc, files, mavenPreferences, owner, true, new ArrayList<>());
+    public ImportWindowController(LibraryPanelController lpc, List<File> files, Stage owner) {
+        this(lpc, files, owner, true, new ArrayList<>());
     }
     
-    public ImportWindowController(LibraryPanelController lpc, List<File> files, MavenPreferences mavenPreferences, Stage owner,
+    public ImportWindowController(LibraryPanelController lpc, List<File> files, Stage owner,
             boolean copyFilesToUserLibraryDir, List<String> artifactsFilter) {
         super(ImportWindowController.class.getResource("ImportDialog.fxml"), I18N.getBundle(), owner); //NOI18N
         libPanelController = lpc;
@@ -164,7 +161,6 @@ public class ImportWindowController extends AbstractModalDialog {
         this.copyFilesToUserLibraryDir = copyFilesToUserLibraryDir;
         this.artifactsFilter = artifactsFilter;
         this.owner = owner;
-        this.mavenPreferences = mavenPreferences;
     }
 
     /*
@@ -376,9 +372,7 @@ public class ImportWindowController extends AbstractModalDialog {
                 }
             }
         }
-        // add artifacts jars (main and dependencies)
-        res.addAll(mavenPreferences.getArtifactsFilesWithDependencies());
-        
+
         return res;
     }
 

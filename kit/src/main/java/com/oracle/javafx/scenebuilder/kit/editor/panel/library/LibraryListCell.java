@@ -59,7 +59,6 @@ import javafx.stage.Window;
 /**
  * ListCell for the Library panel.
  * Used to dynamically construct items and their graphic, as well as set the cursor.
- * @param <T>
  */
 class LibraryListCell extends ListCell<LibraryListItem> {
     private final EditorController editorController;

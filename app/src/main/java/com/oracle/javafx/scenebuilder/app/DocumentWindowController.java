@@ -178,8 +178,7 @@ public class DocumentWindowController extends AbstractFxmlWindowController {
     private final InspectorPanelController inspectorPanelController = new InspectorPanelController(editorController);
     private final CssPanelDelegate cssPanelDelegate = new CssPanelDelegate(inspectorPanelController, this);
     private final CssPanelController cssPanelController = new CssPanelController(editorController, cssPanelDelegate);
-    private final LibraryPanelController libraryPanelController = new LibraryPanelController(editorController,
-            PreferencesController.getSingleton().getMavenPreferences());
+    private final LibraryPanelController libraryPanelController = new LibraryPanelController(editorController);
     private final SelectionBarController selectionBarController = new SelectionBarController(editorController);
     private final SearchController librarySearchController = new SearchController(editorController);
     private final SearchController inspectorSearchController = new SearchController(editorController);

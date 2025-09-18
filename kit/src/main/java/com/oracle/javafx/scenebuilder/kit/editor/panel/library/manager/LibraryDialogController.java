@@ -36,19 +36,11 @@ import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.ImportWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryPanelController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.library.LibraryUtil;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenDialogController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.RepositoryManagerController;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search.SearchMavenDialogController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.AbstractFxmlWindowController;
 import com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog.AbstractModalDialog;
 import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.library.user.UserLibrary;
-import com.oracle.javafx.scenebuilder.kit.preferences.MavenPreferences;
 import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesControllerBase;
-import com.oracle.javafx.scenebuilder.kit.preferences.PreferencesRecordArtifact;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -61,7 +53,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -71,7 +62,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Controller for the JAR/FXML Library dialog.
@@ -170,12 +160,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             }
         }
         
-        // main artifacts
-        listItems.addAll(preferencesControllerBase.getMavenPreferences().getArtifactsCoordinates()
-                .stream()
-                .map(c -> new ArtifactDialogListItem(this, c))
-                .collect(Collectors.toList()));
-        
         libraryListView.getSelectionModel().selectFirst();
         libraryListView.requestFocus();
     }
@@ -184,13 +168,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
     private void close() {
         listItems.clear();
         closeWindow();
-    }
-
-    @FXML
-    private void manage() {
-        RepositoryManagerController repositoryDialogController = new RepositoryManagerController(editorController,
-                userM2Repository, preferencesControllerBase, getStage());
-        repositoryDialogController.openWindow();
     }
     
     @FXML
@@ -208,38 +185,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             onAddFolder.run();
         }
         loadLibraryList();
-    }
-
-    @FXML
-    private void addRelease() {
-        SearchMavenDialogController mavenDialogController = new SearchMavenDialogController(editorController,
-                userM2Repository, preferencesControllerBase, getStage());
-        mavenDialogController.openWindow();
-        mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                if (!mavenDialogController.getStage().isShowing()) {
-                    loadLibraryList();
-                    mavenDialogController.getStage().showingProperty().removeListener(this);
-                }
-            }
-        });
-    }
-    
-    @FXML
-    private void addManually() {
-        MavenDialogController mavenDialogController = new MavenDialogController(editorController, userM2Repository,
-                preferencesControllerBase, getStage());
-        mavenDialogController.openWindow();
-        mavenDialogController.getStage().showingProperty().addListener(new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                if (!mavenDialogController.getStage().isShowing()) {
-                    loadLibraryList();
-                    mavenDialogController.getStage().showingProperty().removeListener(this);
-                }
-            }
-        });
     }
      
     /*
@@ -295,9 +240,6 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                         listItems.remove(item);
                     }
                 }
-            } else if (dialogListItem instanceof ArtifactDialogListItem) {
-                preferencesControllerBase.removeArtifact(((ArtifactDialogListItem) dialogListItem).getCoordinates());
-                listItems.remove(dialogListItem);
             }
         } catch (IOException x) {
             log.error("Error while deleting the file", x);
@@ -311,8 +253,8 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
             if (Files.exists(item.getFilePath())) {
                 if (LibraryUtil.isJarPath(item.getFilePath()) || Files.isDirectory(item.getFilePath())) {
                     final ImportWindowController iwc = new ImportWindowController(
-                            new LibraryPanelController(editorController, preferencesControllerBase.getMavenPreferences()),
-                            Arrays.asList(item.getFilePath().toFile()), preferencesControllerBase.getMavenPreferences(),
+                            new LibraryPanelController(editorController),
+                            Arrays.asList(item.getFilePath().toFile()),
                             getStage());
                     iwc.setToolStylesheet(editorController.getToolStylesheet());
                     // See comment in OnDragDropped handle set in method startListeningToDrop.
@@ -331,46 +273,11 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                     }
                 } 
             }
-        } else if (dialogListItem instanceof ArtifactDialogListItem) {
-            MavenPreferences mavenPreferences = preferencesControllerBase.getMavenPreferences();
-            MavenArtifact mavenArtifact = mavenPreferences
-                    .getRecordArtifact(((ArtifactDialogListItem) dialogListItem).getCoordinates())
-                    .getMavenArtifact();
-            List<File> files = mavenPreferences.getArtifactFileWithDependencies(mavenArtifact);
-            List<String> filter = mavenPreferences.getArtifactFilter(mavenArtifact);
-
-            final ImportWindowController iwc = new ImportWindowController(
-                        new LibraryPanelController(editorController, preferencesControllerBase.getMavenPreferences()),
-                                files, preferencesControllerBase.getMavenPreferences(), getStage(),
-                    false, filter);
-            iwc.setToolStylesheet(editorController.getToolStylesheet());
-            AbstractModalDialog.ButtonID userChoice = iwc.showAndWait();
-            if (userChoice == AbstractModalDialog.ButtonID.OK) {
-                mavenArtifact.setFilter(iwc.getNewExcludedItems());
-                updatePreferences(mavenArtifact);
-                logInfoMessage("log.user.maven.updated", mavenArtifact.getCoordinates());
-            }
         }
     }
     
     private void logInfoMessage(String key, Object... args) {
         editorController.getMessageLog().logInfoMessage(key, I18N.getBundle(), args);
-    }
-    
-    private void updatePreferences(MavenArtifact mavenArtifact) {
-        if (mavenArtifact == null) {
-            return;
-        }
-        
-        userLibrary.stopWatching();
-        
-        // Update record artifact
-        final PreferencesRecordArtifact recordArtifact = preferencesControllerBase.
-                getRecordArtifact(mavenArtifact);
-        recordArtifact.writeToJavaPreferences();
-
-        userLibrary.startWatching();
-        
     }
 
     public void setOnAddJar(Runnable onAddJar) {

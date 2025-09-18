@@ -31,11 +31,8 @@
  */
 package com.oracle.javafx.scenebuilder.kit.preferences;
 
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.MavenArtifact;
-import com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.Repository;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 @Slf4j
@@ -49,8 +46,6 @@ public abstract class PreferencesControllerBase {
 
     // NODES
     private static final String DOCUMENTS = "DOCUMENTS"; //NOI18N
-    private static final String ARTIFACTS = "ARTIFACTS"; //NOI18N
-    private static final String REPOSITORIES = "REPOSITORIES"; //NOI18N
 
     // GLOBAL PREFERENCES
     public static final String ROOT_CONTAINER_HEIGHT = "ROOT_CONTAINER_HEIGHT"; //NOI18N
@@ -83,12 +78,6 @@ public abstract class PreferencesControllerBase {
     protected final Preferences applicationRootPreferences;
     protected final PreferencesRecordGlobalBase recordGlobal;
     protected final Preferences documentsRootPreferences;
-    protected  final Preferences artifactsRootPreferences;
-    protected final Preferences repositoriesRootPreferences;
-    protected final MavenPreferences mavenPreferences;
-    protected final RepositoryPreferences repositoryPreferences;
-
-
 
     /***************************************************************************
      *                                                                         *
@@ -106,56 +95,6 @@ public abstract class PreferencesControllerBase {
         // Preferences specific to the document
         // Create the root node for all documents preferences
         documentsRootPreferences = applicationRootPreferences.node(DOCUMENTS);
-
-        // Preferences specific to the maven artifacts
-        // Create the root node for all artifacts preferences
-        artifactsRootPreferences = applicationRootPreferences.node(ARTIFACTS);
-
-        // Preferences specific to the repositories
-        // Create the root node for all repositories preferences
-        repositoriesRootPreferences = applicationRootPreferences.node(REPOSITORIES);
-
-        // maven artifacts
-        mavenPreferences = new MavenPreferences();
-
-        // create initial map of existing artifacts
-        try {
-            final String[] childrenNames = artifactsRootPreferences.childrenNames();
-            for (String child : childrenNames) {
-                Preferences artifactPreferences = artifactsRootPreferences.node(child);
-                MavenArtifact mavenArtifact = new MavenArtifact(child);
-                mavenArtifact.setPath(artifactPreferences.get(PreferencesRecordArtifact.PATH, null));
-                mavenArtifact.setDependencies(artifactPreferences.get(PreferencesRecordArtifact.DEPENDENCIES, null));
-                mavenArtifact.setFilter(artifactPreferences.get(PreferencesRecordArtifact.FILTER, null));
-                final PreferencesRecordArtifact recordArtifact = new PreferencesRecordArtifact(
-                        artifactsRootPreferences, mavenArtifact);
-                mavenPreferences.addRecordArtifact(child, recordArtifact);
-            }
-        } catch (BackingStoreException ex) {
-            log.error(ex.getMessage(), ex);
-        }
-
-        // repositories
-        repositoryPreferences = new RepositoryPreferences();
-
-        // create initial map of existing repositories
-        try {
-            final String[] childrenNames = repositoriesRootPreferences.childrenNames();
-            for (String child : childrenNames) {
-                Preferences rp = repositoriesRootPreferences.node(child);
-                Repository repository = new Repository(rp.get(PreferencesRecordRepository.REPO_ID, null),
-                        rp.get(PreferencesRecordRepository.REPO_TYPE, null),
-                        rp.get(PreferencesRecordRepository.REPO_URL, null),
-                        rp.get(PreferencesRecordRepository.REPO_USER, null),
-                        rp.get(PreferencesRecordRepository.REPO_PASS, null));
-                final PreferencesRecordRepository recordRepository = new PreferencesRecordRepository(
-                        artifactsRootPreferences, repository);
-                repositoryPreferences.addRecordRepository(child, recordRepository);
-            }
-        } catch (BackingStoreException ex) {
-            log.error(ex.getMessage(), ex);
-        }
-
     }
 
     /***************************************************************************
@@ -166,58 +105,6 @@ public abstract class PreferencesControllerBase {
 
     public PreferencesRecordGlobalBase getRecordGlobal() {
         return recordGlobal;
-    }
-
-    public MavenPreferences getMavenPreferences() {
-        return mavenPreferences;
-    }
-
-    public PreferencesRecordArtifact getRecordArtifact(MavenArtifact mavenArtifact) {
-        PreferencesRecordArtifact recordArtifact = mavenPreferences.getRecordArtifact(mavenArtifact.getCoordinates());
-        if (recordArtifact == null) {
-            recordArtifact = new PreferencesRecordArtifact(artifactsRootPreferences, mavenArtifact);
-            mavenPreferences.addRecordArtifact(mavenArtifact.getCoordinates(), recordArtifact);
-        }
-        return recordArtifact;
-    }
-
-    public void removeArtifact(String coordinates) {
-        if (coordinates != null && !coordinates.isEmpty() &&
-                mavenPreferences.getRecordArtifact(coordinates) != null) {
-            Preferences node = artifactsRootPreferences.node(coordinates);
-            try {
-                node.removeNode();
-                mavenPreferences.removeRecordArtifact(coordinates);
-            } catch (BackingStoreException ex) {
-                log.error(ex.getMessage(), ex);
-            }
-        }
-    }
-
-    public RepositoryPreferences getRepositoryPreferences() {
-        return repositoryPreferences;
-    }
-
-    public PreferencesRecordRepository getRecordRepository(Repository repository) {
-        PreferencesRecordRepository recordRepository = repositoryPreferences.getRecordRepository(repository.getId());
-        if (recordRepository == null) {
-            recordRepository = new PreferencesRecordRepository(repositoriesRootPreferences, repository);
-            repositoryPreferences.addRecordRepository(repository.getId(), recordRepository);
-        }
-        return recordRepository;
-    }
-
-    public void removeRepository(String id) {
-        if (id != null && !id.isEmpty() &&
-                repositoryPreferences.getRecordRepository(id) != null) {
-            Preferences node = repositoriesRootPreferences.node(id);
-            try {
-                node.removeNode();
-                repositoryPreferences.removeRecordRepository(id);
-            } catch (BackingStoreException ex) {
-                log.error(ex.getMessage(), ex);
-            }
-        }
     }
 
 }

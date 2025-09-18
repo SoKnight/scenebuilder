@@ -46,21 +46,6 @@ public class DialogListItemComparatorTest {
     private DialogListItemComparator classUnderTest = new DialogListItemComparator();
 
     @Test
-    public void testSortingOrArifactItems() {
-
-        DialogListItem artifactItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
-        DialogListItem actuallySameItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
-
-        DialogListItem otherRevisionItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.2.17");
-        DialogListItem commercialItem = new ArtifactDialogListItem(null, "com.acme.main:business:4.0");
-
-        assertTrue(classUnderTest.compare(artifactItem, otherRevisionItem) < 0);
-        assertTrue(classUnderTest.compare(artifactItem, commercialItem) > 0);
-        assertEquals(0, classUnderTest.compare(artifactItem, actuallySameItem));
-
-    }
-
-    @Test
     public void testLibraryDirectoriesPreceedFiles() throws Exception {
 
         URL resource = getClass().getClassLoader().getResource("libraryManager/Empty-Dummy-Library.jar");
@@ -72,18 +57,6 @@ public class DialogListItemComparatorTest {
 
         assertTrue(classUnderTest.compare(libraryDirItem, libraryFileItem) < 0);
         assertTrue(classUnderTest.compare(libraryFileItem, libraryDirItem) > 0);
-
-    }
-
-    @Test
-    public void testLibraryFilesPreceedArtifacts() {
-
-        DialogListItem artifactItem = new ArtifactDialogListItem(null, "net.somegroup.package:myArtifact:0.1.17");
-        DialogListItem libraryFileItem = new LibraryDialogListItem(null,
-                Paths.get("c:/mylibrary/my-special-controls.jar"));
-
-        assertEquals(1, classUnderTest.compare(artifactItem, libraryFileItem));
-        assertEquals(-1, classUnderTest.compare(libraryFileItem, artifactItem));
 
     }
 

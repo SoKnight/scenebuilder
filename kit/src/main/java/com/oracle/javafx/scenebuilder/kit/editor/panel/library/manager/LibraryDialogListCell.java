@@ -78,7 +78,7 @@ public class LibraryDialogListCell extends ListCell<DialogListItem> {
         if (dialogListItem instanceof LibraryDialogListItem) {
             name = ((LibraryDialogListItem) dialogListItem).toString();
         } else {
-            name = ((ArtifactDialogListItem) dialogListItem).getCoordinates();
+            throw new IllegalStateException();
         }
         Label fileName = new Label(name);
         HBox.setHgrow(fileName, Priority.ALWAYS);

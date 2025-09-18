@@ -42,15 +42,8 @@ module com.gluonhq.scenebuilder.kit {
 
     requires ch.qos.logback.classic;
     requires java.net.http;
-    requires static jakarta.json;
     requires transitive static java.prefs;
     requires org.slf4j;
-
-    requires static org.apache.maven.resolver;
-    requires static org.apache.maven.resolver.spi;
-    requires static org.apache.maven.resolver.impl;
-    requires static org.apache.maven.resolver.supplier;
-    requires static org.apache.maven.resolver.util;
 
     opens com.oracle.javafx.scenebuilder.kit to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.alert;
@@ -95,11 +88,6 @@ module com.gluonhq.scenebuilder.kit {
     opens com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.editor.panel.library to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.dialog to javafx.fxml;
-    opens com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.editor.panel.util to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog to javafx.fxml;
     opens com.oracle.javafx.scenebuilder.kit.editor.report to javafx.fxml;
@@ -183,11 +171,6 @@ module com.gluonhq.scenebuilder.kit {
     exports com.oracle.javafx.scenebuilder.kit.editor.panel.inspector.popupeditors;
     exports com.oracle.javafx.scenebuilder.kit.editor.panel.library;
     exports com.oracle.javafx.scenebuilder.kit.editor.panel.library.manager;
-    exports com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven;
-    exports com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.preset;
-    exports com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository;
-    exports com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.repository.dialog;
-    exports com.oracle.javafx.scenebuilder.kit.editor.panel.library.maven.search;
     exports com.oracle.javafx.scenebuilder.kit.editor.panel.util;
     exports com.oracle.javafx.scenebuilder.kit.editor.panel.util.dialog;
     exports com.oracle.javafx.scenebuilder.kit.editor.report;

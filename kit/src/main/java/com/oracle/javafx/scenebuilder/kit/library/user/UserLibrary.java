@@ -94,7 +94,7 @@ public class UserLibrary extends Library {
      */
 
     public UserLibrary(String path) {
-        this(path, null, null);
+        this(path, Collections::emptyList, Collections::emptyList);
     }
 
     public UserLibrary(String path, Supplier<List<Path>> additionalJarPaths, Supplier<List<String>> additionalFilter) {

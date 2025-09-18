@@ -40,11 +40,6 @@ class DialogListItemComparator implements Comparator<DialogListItem> {
 
     @Override
     public int compare(DialogListItem a, DialogListItem b) {
-
-        if (a instanceof ArtifactDialogListItem && b instanceof ArtifactDialogListItem) {            
-            return compareUsingArtifactCoordinates((ArtifactDialogListItem) a, (ArtifactDialogListItem) b);
-        }
-
         if (a instanceof LibraryDialogListItem && b instanceof LibraryDialogListItem) {            
             return compareUsingPaths((LibraryDialogListItem) a, (LibraryDialogListItem) b);
         }
@@ -54,10 +49,6 @@ class DialogListItemComparator implements Comparator<DialogListItem> {
         } else {            
             return 1;
         }
-    }
-
-    private int compareUsingArtifactCoordinates(ArtifactDialogListItem a, ArtifactDialogListItem b) {
-        return a.getCoordinates().compareTo(b.getCoordinates());
     }
 
     private int compareUsingPaths(LibraryDialogListItem a, LibraryDialogListItem b) {
