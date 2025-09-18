@@ -52,46 +52,6 @@ For each library or file, the user can edit or delete it. Editing an FXML will o
 
 On the lower part of the dialog, there are different actions that the user can perform.
 
-### Search repositories option
-
-The user can type a name of a library: full name or part of its group id, or full name or part of it of the artifact id, following the usual naming convention.
-
-<p align="center"><img src="images/librarymanager/SceneBuilder08.png" alt="Search Library in Repositories" width="400"></p>
-
-For instance, to download and install the latest release of ControlsFX, just by typing its maven group `org.controlsfx`, the existing artifacts (in the registered repositories) will show up:
-
-<p align="center"><img src="images/librarymanager/SceneBuilder09.png" alt="ControlsFX results" width="400"></p>
-
-Then selecting one of the presented results will download the latest release of the artifact from one of the repositories, install it to the user's local .m2, find all possible custom controls found in the jar, and present them for a preview:
-
-<p align="center"><img src="images/librarymanager/SceneBuilder10.png" alt="ControlsFX custom controls" width="400"></p>
-
-The user can browse over the list of custom controls, select anyone for a preview (not all have one), and select one or more custom controls to be imported.
-
-After pressing Import Components, the Import dialog will close and the Manager will show a new entry added:
-
-<p align="center"><img src="images/librarymanager/SceneBuilder11.png" alt="ControlsFX successfully imported" width="400"></p>
-
-And while the full jar was imported, only the selected custom controls are added into the Custom section, ready to be used:
-
-<p align="center"><img src="images/librarymanager/SceneBuilder12.png" alt="Using ControlsFX imported controls" width="400"></p>
-
-If other controls are needed from this jar, the user can open the Library Manager again, and edit the related entry, to select again from the Import dialog.
-
-Also note that if an artifact is removed from the list, it will just be removed from Scene Builder, but the artifact won’t be removed from the local .m2 repository.
-
-### Manually add Library from repository option
-
-The user can type the exact names of groupID and artifactID coordinates of an artifact to get all existing versions of an artifact in all registered repositories:
-
-<p align="center"><img src="images/librarymanager/SceneBuilder13.png" alt="Add library from repository dialog" width="400"></p>
-
-For instance, for `org.controlsfx` group and `controlsfx` artifact, a list is found in the registered repositories (Maven Central releases, Sonatype snapshots, Local .m2, Nexus, …):
-
-<p align="center"><img src="images/librarymanager/SceneBuilder14.png" alt="Different ControlsFX artifacts found" width="400"></p>
-
-Then any given version can be selected to extract its custom controls, as it was shown earlier.
-
 ### Add Library/FXML from file system option
 
 This option opens a file chooser that lets the user find a jar or an FXML file in the local file system.
@@ -107,22 +67,6 @@ After locating and selecting a jar with one or more custom controls, it will ext
 This is an alternative to adding the jar with the packaged classed: when building the control, the output folder that contains the list of classes is enough to find and import the custom control. The result is the same as with the jar, but this option removes the extra step of packaging, especially while developing the early versions of the control.
 
 <p align="center"><img src="images/librarymanager/SceneBuilder17.png" alt="Custom controls from build folder" width="400"></p>
-
-### Manage repositories option
-
-Finally, the user can manage the repositories where artifacts are resolved from.
-
-<p align="center"><img src="images/librarymanager/SceneBuilder18.png" alt="Manage repositories dialog" width="400"></p>
-
-Initially, the preset list of remote repositories is listed. These are not editable and can’t be removed.
-
-By clicking on Add Repository, the user can add new repositories to the list, both public or private.
-
-A new repository requires a name and a valid URL. If it is private, the credentials are required as well. The test button will perform a connection to the given URL to check if it is valid or not, and if private, if the credentials are valid as well.
-
-<p align="center"><img src="images/librarymanager/SceneBuilder19.png" alt="Add custom repository dialog" width="400"></p>
-
-Note that in case of private repositories, the credentials will be stored locally in the user preferences. They will be used only when installing libraries from the private repository.
 
 ## The Custom section
 
