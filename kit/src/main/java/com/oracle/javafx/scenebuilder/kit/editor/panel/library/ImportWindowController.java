@@ -70,16 +70,23 @@ import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.cert.CRLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /**
  *
@@ -232,28 +239,25 @@ public class ImportWindowController extends AbstractModalDialog {
             if (copyFilesToUserLibraryDir) {
                 // collect directories from importFiles and add to library.folders file
                 // for other filex (jar, fxml) copy them directly
-                List<File> folders = new ArrayList<>(importFiles.size());
-                List<File> files = new ArrayList<>(importFiles.size());
+                List<File> folders = new ArrayList<>();
+                List<File> fxmls = new ArrayList<>();
+                List<File> jars = new ArrayList<>();
 
                 for (File file : importFiles) {
-                    if (file.isDirectory())
+                    if (file.isDirectory()) {
                         folders.add(file);
-                    else
-                        files.add(file);
+                    } else if (file.isFile()) {
+                        if (LibraryUtil.isFxmlPath(file.toPath())) {
+                            fxmls.add(file);
+                        } else if (LibraryUtil.isJarPath(file.toPath())) {
+                            jars.add(file);
+                        }
+                    }
                 }
 
-                if (!files.isEmpty())
-                    libPanelController.copyFilesToUserLibraryDir(files);
-
-                Path foldersMarkerPath = Paths.get(userLib.getPath().toString(), LibraryUtil.FOLDERS_LIBRARY_FILENAME);
-
-                if (!Files.exists(foldersMarkerPath))
-                    Files.createFile(foldersMarkerPath);
-
-                Set<String> lines = new TreeSet<>(Files.readAllLines(foldersMarkerPath));
-                lines.addAll(folders.stream().map(f -> f.getAbsolutePath()).collect(Collectors.toList()));
-
-                Files.write(foldersMarkerPath, lines);
+                updateMarkersFile(folders, Paths.get(userLib.getPath(), LibraryUtil.FOLDERS_LIBRARY_FILENAME));
+                updateMarkersFile(fxmls, Paths.get(userLib.getPath(), LibraryUtil.FXMLS_LIBRARY_FILENAME));
+                updateMarkersFile(jars, Paths.get(userLib.getPath(), LibraryUtil.JARS_LIBRARY_FILENAME));
             }
 
             if (copyFilesToUserLibraryDir) {
@@ -264,6 +268,16 @@ public class ImportWindowController extends AbstractModalDialog {
         } finally {
             alreadyExcludedItems.clear();
         }
+    }
+
+    private void updateMarkersFile(List<File> files, Path markerPath) throws IOException {
+        if (files.isEmpty())
+            return;
+
+        List<String> lines = Files.isRegularFile(markerPath) ? Files.readAllLines(markerPath, UTF_8) : List.of();
+        var content = new TreeSet<>(lines);
+        content.addAll(files.stream().map(File::getAbsolutePath).toList());
+        Files.write(markerPath, content, UTF_8, CREATE, TRUNCATE_EXISTING);
     }
 
     @Override

@@ -54,14 +54,16 @@ import javafx.stage.WindowEvent;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /**
  * Controller for the JAR/FXML Library dialog.
@@ -149,8 +151,18 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                     } else if (LibraryUtil.isFolderMarkerPath(entry)) {
                         // open folders marker file: every line should be a single folder entry
                         // we scan the file and add the path to currentJarsOrFolders
-                        List<Path> folderPaths = LibraryUtil.getFolderPaths(entry);
+                        List<Path> folderPaths = LibraryUtil.getMarkerFilePaths(entry, Files::isDirectory);
                         for (Path f : folderPaths) {
+                            listItems.add(new LibraryDialogListItem(this, f));
+                        }
+                    } else if (LibraryUtil.isFxmlMarkerPath(entry)) {
+                        List<Path> fxmlPaths = LibraryUtil.getMarkerFilePaths(entry, Files::isRegularFile);
+                        for (Path f : fxmlPaths) {
+                            listItems.add(new LibraryDialogListItem(this, f));
+                        }
+                    } else if (LibraryUtil.isJarMarkerPath(entry)) {
+                        List<Path> jarPaths = LibraryUtil.getMarkerFilePaths(entry, Files::isRegularFile);
+                        for (Path f : jarPaths) {
                             listItems.add(new LibraryDialogListItem(this, f));
                         }
                     }
@@ -217,26 +229,34 @@ public class LibraryDialogController extends AbstractFxmlWindowController {
                 Path path = item.getFilePath();
 
                 if (Files.exists(path)) {
+                    // we need to remove the entry from the folder list in the placeholder marker
+                    String libraryPath = ((UserLibrary) editorController.getLibrary()).getPath();
+
                     if (Files.isDirectory(path)) {
-                        // we need to remove the entry from the folder list in the placeholder marker
-                        String libraryPath = ((UserLibrary) editorController.getLibrary()).getPath();
-
                         Path foldersPath = Paths.get(libraryPath, LibraryUtil.FOLDERS_LIBRARY_FILENAME);
-                        if (Files.exists(foldersPath)) {
-
-                            List<String> lines = Files.readAllLines(foldersPath);
-
-                            for (Iterator<String> it = lines.iterator(); it.hasNext();) {
-                                String line = (String) it.next();
-                                if (line.equals(path.toString()))
-                                    it.remove();
+                        if (Files.isRegularFile(foldersPath)) {
+                            try (var lines = Files.lines(foldersPath)) {
+                                var content = lines.filter(line -> !path.toString().equals(line)).toList();
+                                Files.write(foldersPath, content, UTF_8, CREATE, TRUNCATE_EXISTING);
                             }
-
-                            Files.write(foldersPath, lines);
                         }
-                    }
-                    else {
-                        Files.delete(path);
+                    } else if (Files.isRegularFile(path)) {
+                        Path fxmlsPath = Path.of(libraryPath, LibraryUtil.FXMLS_LIBRARY_FILENAME);
+                        if (Files.isRegularFile(fxmlsPath)) {
+                            try (var lines = Files.lines(fxmlsPath)) {
+                                var content = lines.filter(line -> !path.toString().equals(line)).toList();
+                                Files.write(fxmlsPath, content, UTF_8, CREATE, TRUNCATE_EXISTING);
+                            }
+                        }
+
+                        Path jarsPath = Path.of(libraryPath, LibraryUtil.JARS_LIBRARY_FILENAME);
+                        if (Files.isRegularFile(jarsPath)) {
+                            try (var lines = Files.lines(jarsPath)) {
+                                var content = lines.filter(line -> !path.toString().equals(line)).toList();
+                                Files.write(jarsPath, content, UTF_8, CREATE, TRUNCATE_EXISTING);
+                            }
+                        }
+
                         listItems.remove(item);
                     }
                 }

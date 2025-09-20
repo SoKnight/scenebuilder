@@ -61,7 +61,7 @@ class LibraryFolderWatcher implements Runnable {
 
     private final UserLibrary library;
 
-    private enum FILE_TYPE {FXML, JAR, FOLDER_MARKER}
+    private enum FILE_TYPE {FXML, JAR, FOLDER_MARKER, FXML_MARKER, JAR_MARKER}
 
     private static final List<String> JAVAFX_MODULES = Arrays.asList(
             "javafx-base", "javafx-graphics", "javafx-controls",
@@ -115,10 +115,11 @@ class LibraryFolderWatcher implements Runnable {
                         } else if (LibraryUtil.isFolderMarkerPath(entry)) {
                             // open folders marker file: every line should be a single folder entry
                             // we scan the file and add the path to currentJarsOrFolders
-                            List<Path> folderPaths = LibraryUtil.getFolderPaths(entry);
-                            for (Path f : folderPaths) {
-                                currentJarsOrFolders.add(f);
-                            }
+                            currentJarsOrFolders.addAll(LibraryUtil.getMarkerFilePaths(entry, Files::isDirectory));
+                        } else if (LibraryUtil.isFxmlMarkerPath(entry)) {
+                            currentFxmls.addAll(LibraryUtil.getMarkerFilePaths(entry, Files::isRegularFile));
+                        } else if (LibraryUtil.isJarMarkerPath(entry)) {
+                            currentJarsOrFolders.addAll(LibraryUtil.getMarkerFilePaths(entry, Files::isRegularFile));
                         }
                     }
                     retry = false;
@@ -189,6 +190,10 @@ class LibraryFolderWatcher implements Runnable {
                                         isDirty = true;
                                     } else if (LibraryUtil.isFolderMarkerPath((Path)context)) {
                                         isDirty = true;
+                                    } else if (LibraryUtil.isFxmlMarkerPath((Path)context)) {
+                                        isDirty = true;
+                                    } else if (LibraryUtil.isJarMarkerPath((Path)context)) {
+                                        isDirty = true;
                                     }
                                 } else {
                                     assert kind == StandardWatchEventKinds.OVERFLOW;
@@ -217,10 +222,17 @@ class LibraryFolderWatcher implements Runnable {
                                     for (Path path : foldersMarkers) {
                                         // open folders marker file: every line should be a single folder entry
                                         // we scan the file and add the path to currentJarsOrFolders
-                                        List<Path> folderPaths = LibraryUtil.getFolderPaths(path);
-                                        for (Path f : folderPaths) {
-                                            jarsAndFolders.add(f);
-                                        }
+                                        jarsAndFolders.addAll(LibraryUtil.getMarkerFilePaths(path, Files::isDirectory));
+                                    }
+
+                                    Set<Path> fxmlsMarkers = getAllFiles(FILE_TYPE.FXML_MARKER);
+                                    for (Path path : fxmlsMarkers) {
+                                        fxmls.addAll(LibraryUtil.getMarkerFilePaths(path, Files::isRegularFile));
+                                    }
+
+                                    Set<Path> jarMarkers = getAllFiles(FILE_TYPE.JAR_MARKER);
+                                    for (Path path : jarMarkers) {
+                                        jarsAndFolders.addAll(LibraryUtil.getMarkerFilePaths(path, Files::isRegularFile));
                                     }
 
                             	    exploreAndUpdateLibrary(jarsAndFolders);
@@ -259,24 +271,16 @@ class LibraryFolderWatcher implements Runnable {
 
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(folder)) {
             for (Path p : ds) {
-                switch (fileType) {
-                    case FXML:
-                        if (LibraryUtil.isFxmlPath(p)) {
-                            res.add(p);
-                        }
-                        break;
-                    case JAR:
-                        if (LibraryUtil.isJarPath(p)) {
-                            res.add(p);
-                        }
-                        break;
-                    case FOLDER_MARKER:
-                        if (LibraryUtil.isFolderMarkerPath(p)) {
-                            res.add(p);
-                        }
-                        break;
-                    default:
-                        break;
+                var matched = switch (fileType) {
+                    case FXML -> LibraryUtil.isFxmlPath(p);
+                    case JAR -> LibraryUtil.isJarPath(p);
+                    case FOLDER_MARKER -> LibraryUtil.isFolderMarkerPath(p);
+                    case FXML_MARKER -> LibraryUtil.isFxmlMarkerPath(p);
+                    case JAR_MARKER -> LibraryUtil.isJarMarkerPath(p);
+                };
+
+                if (matched) {
+                    res.add(p);
                 }
             }
         }

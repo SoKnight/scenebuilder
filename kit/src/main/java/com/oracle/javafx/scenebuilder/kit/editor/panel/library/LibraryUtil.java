@@ -37,17 +37,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.module.ModuleReference;
 import java.lang.module.ResolvedModule;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class LibraryUtil {
 
     public static final String FOLDERS_LIBRARY_FILENAME = "library.folders"; //NOI18N
+    public static final String FXMLS_LIBRARY_FILENAME = "library.fxmls"; //NOI18N
+    public static final String JARS_LIBRARY_FILENAME = "library.jars"; //NOI18N
     private static Set<ResolvedModule> MODULES;
 
     LibraryUtil() {
@@ -82,16 +86,22 @@ public class LibraryUtil {
         return pathString.endsWith(".folders"); //NOI18N
     }
 
-    public static List<Path> getFolderPaths(Path libraryFile) throws FileNotFoundException, IOException {
-        return Files.readAllLines(libraryFile).stream()
-                .map(line -> {
-                    File f = new File(line);
-                    if (f.exists() && f.isDirectory())
-                        return f.toPath();
-                    else
-                        return null;
-                })
-                .filter(p -> p != null)
-                .collect(Collectors.toList());
+    public static boolean isFxmlMarkerPath(Path path) {
+        final String pathString = path.toString().toLowerCase(Locale.ROOT);
+        return pathString.endsWith(".fxmls");
+    }
+
+    public static boolean isJarMarkerPath(Path path) {
+        final String pathString = path.toString().toLowerCase(Locale.ROOT);
+        return pathString.endsWith(".jars");
+    }
+
+    public static List<Path> getMarkerFilePaths(Path libraryFile, Predicate<Path> pathFilter) throws IOException {
+        try (var lines = Files.lines(libraryFile, StandardCharsets.UTF_8)) {
+            return lines.map(line -> Path.of(line.trim()))
+                .filter(Files::exists)
+                .filter(pathFilter)
+                .toList();
+        }
     }
 }
