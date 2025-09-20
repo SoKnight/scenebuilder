@@ -355,18 +355,29 @@ class LibraryFolderWatcher implements Runnable {
         // 2)
         final List<String> excludedItems = library.getFilter();
         final List<JarReport> moduleOrJarOrFolderReports = new ArrayList<>();
+        ModuleLayer moduleLayer = null;
+
         for (Path currentModuleOrJarOrFolder : modulesOrJarsOrFolders) {
             String jarName = currentModuleOrJarOrFolder.getName(currentModuleOrJarOrFolder.getNameCount() - 1).toString();
             if (JAVAFX_MODULES.stream().anyMatch(jarName::startsWith)) {
                 continue;
             }
 
+            if (moduleLayer == null)
+                moduleLayer = LibraryUtil.constructModuleLayer(modulesOrJarsOrFolders, classLoader);
+
             JarReport jarReport;
             String resultText = "";
-            Optional<ModuleReference> moduleReference = LibraryUtil.getModuleReference(currentModuleOrJarOrFolder);
-            if (moduleReference.isPresent()) {
-                log.debug(I18N.getString("log.info.explore.module", moduleReference.get().descriptor()));
-                final ModuleExplorer explorer = new ModuleExplorer(moduleReference.get(), excludedItems);
+            var moduleRef = LibraryUtil.getModuleReference(currentModuleOrJarOrFolder);
+            if (moduleRef.isPresent()) {
+                log.debug(I18N.getString("log.info.explore.module", moduleRef.get().descriptor()));
+
+                var moduleName = moduleRef.get().descriptor().name();
+                var module = moduleLayer.findModule(moduleName);
+                if (module.isEmpty())
+                    throw new IllegalStateException("module '%s' not found in the module layer!".formatted(moduleName));
+
+                final ModuleExplorer explorer = new ModuleExplorer(moduleRef.get(), module.get(), excludedItems);
                 jarReport = explorer.explore();
                 resultText = I18N.getString("log.info.explore.module.results", jarName);
             }

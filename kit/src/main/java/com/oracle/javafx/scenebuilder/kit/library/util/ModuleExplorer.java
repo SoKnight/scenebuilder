@@ -45,11 +45,11 @@ public class ModuleExplorer extends ExplorerBase {
     private final ModuleReference moduleReference;
     private final Module module;
 
-    public ModuleExplorer(ModuleReference moduleReference, List<String> excludedItems) {
+    public ModuleExplorer(ModuleReference moduleReference, Module module, List<String> excludedItems) {
         assert moduleReference != null;
         this.excludedItems = excludedItems;
         this.moduleReference = moduleReference;
-        this.module = ModuleLayer.boot().findModule(moduleReference.descriptor().name()).orElseThrow();
+        this.module = module;
     }
     
     public JarReport explore() throws IOException {

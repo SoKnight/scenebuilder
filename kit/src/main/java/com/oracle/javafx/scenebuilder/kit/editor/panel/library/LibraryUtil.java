@@ -35,15 +35,11 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.library;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.module.ModuleReference;
-import java.lang.module.ResolvedModule;
+import java.lang.module.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -52,23 +48,38 @@ public class LibraryUtil {
     public static final String FOLDERS_LIBRARY_FILENAME = "library.folders"; //NOI18N
     public static final String FXMLS_LIBRARY_FILENAME = "library.fxmls"; //NOI18N
     public static final String JARS_LIBRARY_FILENAME = "library.jars"; //NOI18N
-    private static Set<ResolvedModule> MODULES;
 
     LibraryUtil() {
         // no-op
     }
 
+    public static ModuleLayer constructModuleLayer(Collection<Path> modulesOrJarsOrFolders, ClassLoader parentLoader) {
+        var files = modulesOrJarsOrFolders.stream()
+            .filter(Files::isRegularFile)
+            .toList();
+
+        if (files.isEmpty())
+            return ModuleLayer.empty();
+
+        var moduleFinder = ModuleFinder.of(files.toArray(Path[]::new));
+        var universe = moduleFinder.findAll().stream()
+            .map(ModuleReference::descriptor)
+            .map(ModuleDescriptor::name)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        var parentConfiguration = ModuleLayer.boot().configuration();
+        var configuration = parentConfiguration.resolve(ModuleFinder.of(), moduleFinder, universe);
+        var parentLayers = List.of(ModuleLayer.boot());
+
+        var controller = ModuleLayer.defineModulesWithManyLoaders(configuration, parentLayers, parentLoader);
+        controller.layer().modules().forEach(controller::enableNativeAccess);
+        return controller.layer();
+    }
+
     public static Optional<ModuleReference> getModuleReference(Path path) {
-        if (path == null) {
-            return Optional.empty();
-        }
-        if (MODULES == null) {
-            MODULES = ModuleLayer.boot().configuration().modules();
-        }
-        return MODULES.stream()
-            .map(ResolvedModule::reference)
-            .filter(r -> path.equals(r.location().map(Path::of).orElse(null)))
-            .findFirst();
+        var moduleFinder = ModuleFinder.of(path);
+        return moduleFinder.findAll().stream().findFirst();
     }
 
     public static boolean isJarPath(Path path) {
