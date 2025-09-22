@@ -289,6 +289,8 @@ public class MenuBarController {
     @FXML
     private MenuItem showPreviewInDialogMenuItem;
     @FXML
+    private Menu themeMenu;
+    @FXML
     private RadioMenuItem modenaThemeMenuItem;
     @FXML
     private MenuItem addSceneStyleSheetMenuItem;
@@ -889,6 +891,15 @@ public class MenuBarController {
         showPreviewInDialogMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.SHOW_PREVIEW_DIALOG));
 
         modenaThemeMenuItem.setUserData(new SetThemeActionController(EditorPlatform.Theme.MODENA));
+        for (var loadedTheme : EditorPlatform.Theme.getThemeList()) {
+            if (loadedTheme == EditorPlatform.Theme.MODENA)
+                continue;
+
+            var menuItem = new RadioMenuItem(loadedTheme.value());
+            menuItem.setMnemonicParsing(false);
+            menuItem.setUserData(new SetThemeActionController(loadedTheme));
+            themeMenu.getItems().add(menuItem);
+        }
 
         addSceneStyleSheetMenuItem.setUserData(new DocumentControlActionController(DocumentControlAction.ADD_SCENE_STYLE_SHEET));
         updateOpenAndRemoveSceneStyleSheetMenus();
