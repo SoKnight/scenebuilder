@@ -49,11 +49,16 @@ public class LibraryUtil {
     public static final String FXMLS_LIBRARY_FILENAME = "library.fxmls"; //NOI18N
     public static final String JARS_LIBRARY_FILENAME = "library.jars"; //NOI18N
 
+    private static final boolean DYNAMIC_MODULE_PATH_ENABLED;
+
     LibraryUtil() {
         // no-op
     }
 
     public static ModuleLayer constructModuleLayer(Collection<Path> modulesOrJarsOrFolders, ClassLoader parentLoader) {
+        if (!DYNAMIC_MODULE_PATH_ENABLED)
+            return ModuleLayer.boot();
+
         var files = modulesOrJarsOrFolders.stream()
             .filter(Files::isRegularFile)
             .toList();
@@ -78,8 +83,15 @@ public class LibraryUtil {
     }
 
     public static Optional<ModuleReference> getModuleReference(Path path) {
-        var moduleFinder = ModuleFinder.of(path);
-        return moduleFinder.findAll().stream().findFirst();
+        if (DYNAMIC_MODULE_PATH_ENABLED) {
+            var moduleFinder = ModuleFinder.of(path);
+            return moduleFinder.findAll().stream().findFirst();
+        }
+
+        return ModuleLayer.boot().configuration().modules().stream()
+            .map(ResolvedModule::reference)
+            .filter(ref -> path.equals(ref.location().map(Path::of).orElse(null)))
+            .findFirst();
     }
 
     public static boolean isJarPath(Path path) {
@@ -115,4 +127,10 @@ public class LibraryUtil {
                 .toList();
         }
     }
+
+    static {
+        var property = System.getProperty("library.dynamicModulePath", "false");
+        DYNAMIC_MODULE_PATH_ENABLED = property.equalsIgnoreCase("true");
+    }
+
 }

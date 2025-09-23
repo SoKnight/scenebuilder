@@ -363,14 +363,14 @@ class LibraryFolderWatcher implements Runnable {
                 continue;
             }
 
-            if (moduleLayer == null)
-                moduleLayer = LibraryUtil.constructModuleLayer(modulesOrJarsOrFolders, classLoader);
-
             JarReport jarReport;
             String resultText = "";
             var moduleRef = LibraryUtil.getModuleReference(currentModuleOrJarOrFolder);
             if (moduleRef.isPresent()) {
                 log.debug(I18N.getString("log.info.explore.module", moduleRef.get().descriptor()));
+
+                if (moduleLayer == null)
+                    moduleLayer = LibraryUtil.constructModuleLayer(modulesOrJarsOrFolders, classLoader);
 
                 var moduleName = moduleRef.get().descriptor().name();
                 var module = moduleLayer.findModule(moduleName);
