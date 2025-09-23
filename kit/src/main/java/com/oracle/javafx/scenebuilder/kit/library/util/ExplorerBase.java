@@ -52,6 +52,8 @@ abstract class ExplorerBase {
         final byte[] fxmlBytes = fxmlText.getBytes(Charset.forName("UTF-8")); //NOI18N
 
         final FXMLLoader fxmlLoader = new FXMLLoader();
+        var previousClassLoader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(classLoader);
         try {
             fxmlLoader.setClassLoader(classLoader);
             result = fxmlLoader.load(new ByteArrayInputStream(fxmlBytes));
@@ -59,6 +61,8 @@ abstract class ExplorerBase {
             throw x;
         } catch(RuntimeException|Error x) {
             throw new IOException(x);
+        } finally {
+            Thread.currentThread().setContextClassLoader(previousClassLoader);
         }
 
         return result;
