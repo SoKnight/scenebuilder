@@ -90,6 +90,7 @@ abstract class ExplorerBase {
                 || className.startsWith("javax.") || className.startsWith("javafx.") //NOI18N
                 || className.startsWith("com.oracle.javafx.scenebuilder.") //NOI18N
                 || className.startsWith("com.javafx.")
+                || className.startsWith("META-INF.")
                 || className.endsWith("module-info")
                 || EditorPlatform.hasClassFromExternalPlugin(className) // ignore classes from plugins, they are loaded in their own section
                 || excludedItems.contains(className)) {
