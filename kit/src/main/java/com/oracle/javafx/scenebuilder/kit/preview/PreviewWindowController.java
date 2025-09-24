@@ -325,10 +325,8 @@ public final class PreviewWindowController extends AbstractWindowController {
 
                 getScene().setRoot(getRoot());
                 if (themeStyleSheetsList != null && !themeStyleSheetsList.isEmpty()) {
-                    getScene().setUserAgentStylesheet(themeStyleSheetsList.getFirst());
-                    ObservableList<String> newStylesheets = FXCollections.observableArrayList(themeStyleSheetsList);
                     getScene().getStylesheets().clear();
-                    getScene().getStylesheets().addAll(newStylesheets);
+                    getScene().getStylesheets().addAll(themeStyleSheetsList);
                 }
                 updateWindowSize();
                 updateWindowTitle();

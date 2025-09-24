@@ -34,39 +34,30 @@ package com.oracle.javafx.scenebuilder.kit.editor.panel.content;
 
 import com.oracle.javafx.scenebuilder.kit.editor.EditorController;
 import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform;
-import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import com.oracle.javafx.scenebuilder.kit.fxom.FXOMDocument;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import com.oracle.javafx.scenebuilder.kit.i18n.I18N;
 import javafx.animation.FadeTransition;
 import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.SubScene;
+import javafx.scene.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Window;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  *
@@ -166,15 +157,14 @@ class WorkspaceController {
     public void setThemeStylesheet(List<String> themeStylesheets, EditorPlatform.Theme theme) {
         assert themeStylesheets != null;
         assert theme != null;
-        List<String> stylesheets = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(theme));
-        themeStylesheets.stream()
-            .filter(s -> !EditorPlatform.isPlatformThemeStylesheetURL(s))
-            .forEach(stylesheets::add);
-        contentSubScene.setUserAgentStylesheet(stylesheets.stream().findFirst().orElse(null));
 
-        ObservableList<String> currentStylesheets = FXCollections.observableArrayList(stylesheets);
+        var stylesheets = themeStylesheets.stream()
+            .filter(Predicate.not(EditorPlatform::isPlatformThemeStylesheetURL))
+            .distinct()
+            .toList();
+
         this.themeStylesheets.clear();
-        this.themeStylesheets.addAll(currentStylesheets);
+        this.themeStylesheets.addAll(stylesheets);
         contentGroupApplyCss();
 
         // Update scenegraph layout, etc
@@ -186,7 +176,10 @@ class WorkspaceController {
     
     public void setPreviewStyleSheets(List<String> previewStyleSheets) {
         EditorPlatform.Theme theme = editorController.getTheme();
-        List<String> stylesheets = new ArrayList<>(EditorPlatform.getStylesheetsForTheme(theme));
+
+        var stylesheets = new HashSet<String>();
+        stylesheets.addAll(EditorPlatform.getStylesheetsForTheme(theme));
+        stylesheets.addAll(theme.getStylesheetURLs());
         stylesheets.addAll(previewStyleSheets);
 
         themeStylesheets.clear();
