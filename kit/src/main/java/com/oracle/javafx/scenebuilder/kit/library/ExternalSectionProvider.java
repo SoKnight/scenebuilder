@@ -40,7 +40,9 @@ public interface ExternalSectionProvider {
      * 0 will be on top, -1 at the bottom
      * @return an integer with the expected position
      */
-    int getExternalSectionPosition();
+    default int getExternalSectionPosition() {
+        return 0;
+    }
 
     /**
      * Name of the external section
@@ -59,13 +61,17 @@ public interface ExternalSectionProvider {
      * FXML files for each item are located
      * @return a String with the path
      */
-    String getItemsFXMLPath();
+    default String getItemsFXMLPath() {
+        return null;
+    }
 
     /**
      * path of the Icon resources, relative to the external section provider, where the
      * icons for each item are located
      * @return a String with the path
      */
-    String getItemsIconPath();
+    default String getItemsIconPath() {
+        return null;
+    }
 
 }

@@ -31,6 +31,7 @@
  */
 package com.oracle.javafx.scenebuilder.kit.editor;
 
+import com.oracle.javafx.scenebuilder.kit.editor.EditorPlatform.Theme;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -43,14 +44,18 @@ public interface ExternalThemeProvider {
      *
      * @return list of themes
      */
-    List<EditorPlatform.Theme> getExternalThemes();
+    default List<Theme> getExternalThemes() {
+        return List.of();
+    }
 
     /**
      * Gets a list of possible stylesheets from an external plugin
      *
      * @return a list of stylesheets
      */
-    List<String> getExternalStylesheets();
+    default List<String> getExternalStylesheets() {
+        return List.of();
+    }
 
     /**
      * Verifies if a given text (either from a class name or an FXML file) contains
@@ -59,7 +64,9 @@ public interface ExternalThemeProvider {
      * @param text the text to check
      * @return true if the text contains package names from a plugin
      */
-    boolean hasClassFromExternalPlugin(String text);
+    default boolean hasClassFromExternalPlugin(String text) {
+        return false;
+    }
 
     /**
      * If controls from an external plugin are added, but the current theme doesn't support those,
@@ -69,7 +76,7 @@ public interface ExternalThemeProvider {
      * @param currentTheme the current theme
      * @param onSuccess if alert button is accepted, the external plugin will be applied
      */
-    void showThemeAlert(Stage owner, EditorPlatform.Theme currentTheme, Consumer<EditorPlatform.Theme> onSuccess);
+    default void showThemeAlert(Stage owner, Theme currentTheme, Consumer<Theme> onSuccess) {}
 
     /**
      * When a jar is imported as custom library, but there is a plugin with such
@@ -77,12 +84,14 @@ public interface ExternalThemeProvider {
      *
      * @param owner the stage that will own the alert
      */
-    void showImportAlert(Stage owner);
+    default void showImportAlert(Stage owner) {}
 
     /**
      * Returns a link to the javadoc URL of the plugin
      *
      * @return a valid link to javadoc
      */
-    String getExternalJavadocURL();
+    default String getExternalJavadocURL() {
+        return "";
+    }
 }
