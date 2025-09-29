@@ -27,7 +27,7 @@
         <maven.resolver.version>2.0.0-alpha-8</maven.resolver.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.github.repository>gluonhq/scenebuilder</project.github.repository>
+        <project.github.repository>SoKnight/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
         <jreleaser.files.active>RELEASE</jreleaser.files.active>
         <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
