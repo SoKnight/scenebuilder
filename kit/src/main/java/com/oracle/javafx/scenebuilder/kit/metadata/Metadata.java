@@ -6207,7 +6207,7 @@ public class Metadata {
 
     private void addExternalMetadata() {
         for (ExternalMetadataProvider provider : externalMetadataProviders) {
-            for (ComponentClassMetadata item : provider.getExternalItems()) {
+            for (ComponentClassMetadata item : provider.getExternalItems(this)) {
                 componentClassMap.put(item.getKlass(), item);
             }
         }

@@ -43,7 +43,7 @@ public interface ExternalMetadataProvider {
      * list of items added to the metadata
      * @return a List of classes
      */
-    List<ComponentClassMetadata> getExternalItems();
+    List<ComponentClassMetadata> getExternalItems(Metadata metadata);
 
     /**
      * Returns an optional with a propertyName for an external component class, if any,
