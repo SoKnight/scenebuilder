@@ -39,7 +39,7 @@ jobs:
               <profile>
                 <id>deploy-profile</id>
                 <properties>
-                  <altDeploymentRepository>my-repo::default::${MAVEN_REPO_URL}</altDeploymentRepository>
+                  <altDeploymentRepository>private::${MAVEN_REPO_URL}</altDeploymentRepository>
                 </properties>
               </profile>
             </profiles>

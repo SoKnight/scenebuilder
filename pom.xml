@@ -195,13 +195,6 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>private</id>
-            <url>ignored</url>
-        </repository>
-    </distributionManagement>
-
     <organization>
         <name>Gluon</name>
         <url>https://www.gluonhq.com</url>
