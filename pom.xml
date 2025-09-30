@@ -198,7 +198,7 @@
     <distributionManagement>
         <repository>
             <id>private</id>
-            <url>http://dummy.local/hidden</url>
+            <url>ignored</url>
         </repository>
     </distributionManagement>
 

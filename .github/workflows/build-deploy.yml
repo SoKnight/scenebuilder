@@ -28,20 +28,24 @@ jobs:
           mkdir -p ~/.m2
           cat > ~/.m2/settings.xml <<EOF
           <settings>
-            <mirrors>
-              <mirror>
-                <id>private-mirror</id>
-                <url>${MAVEN_REPO_URL}</url>
-                <mirrorOf>private</mirrorOf>
-              </mirror>
-            </mirrors>
             <servers>
               <server>
-                <id>private-mirror</id>
+                <id>private</id>
                 <username>${MAVEN_USERNAME}</username>
                 <password>${MAVEN_PASSWORD}</password>
               </server>
             </servers>
+            <profiles>
+              <profile>
+                <id>deploy-profile</id>
+                <properties>
+                  <altDeploymentRepository>my-repo::default::${MAVEN_REPO_URL}</altDeploymentRepository>
+                </properties>
+              </profile>
+            </profiles>
+            <activeProfiles>
+              <activeProfile>deploy-profile</activeProfile>
+            </activeProfiles>
           </settings>
           EOF
         env:
