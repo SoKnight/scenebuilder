@@ -197,9 +197,8 @@
 
     <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/SoKnight/scenebuilder</url>
+            <id>private</id>
+            <url>http://dummy.local/hidden</url>
         </repository>
     </distributionManagement>
 
