@@ -29,8 +29,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.github.repository>SoKnight/scenebuilder</project.github.repository>
         <repository.url>github.com:${project.github.repository}</repository.url>
-        <jreleaser.files.active>RELEASE</jreleaser.files.active>
-        <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
         <main.class.name/>
     </properties>
 
@@ -194,201 +192,16 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>org.jreleaser</groupId>
-                <artifactId>jreleaser-maven-plugin</artifactId>
-                <version>1.18.0</version>
-                <inherited>false</inherited>
-                <configuration>
-                    <jreleaser>
-                        <environment>
-                            <properties>
-                                <artifactsDir>artifacts</artifactsDir>
-                                <s3Path>{{tagName}}</s3Path>
-                            </properties>
-                        </environment>
-                        <project>
-                            <!-- should not exceed 79 chars -->
-                            <name>SceneBuilder</name>
-                            <description>Scene Builder is a visual layout tool for designing JavaFX application GUIs</description>
-                            <longDescription>${project.description}</longDescription>
-                            <tags>javafx,gui,tool</tags>
-                            <snapshot>
-                                <fullChangelog>true</fullChangelog>
-                            </snapshot>
-                        </project>
-                        <checksum>
-                            <files>false</files>
-                        </checksum>
-                        <release>
-                            <github>
-                                <branch>master</branch>
-                                <tagName>{{projectVersion}}</tagName>
-                                <files>false</files>
-                                <checksums>false</checksums>
-                                <signatures>false</signatures>
-                                <changelog>
-                                    <formatted>ALWAYS</formatted>
-                                    <preset>conventional-commits</preset>
-                                    <format>- {{commitShortHash}} {{commitTitle}}</format>
-                                    <contributors>
-                                        <format>* {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}</format>
-                                    </contributors>
-                                    <hide>
-                                        <contributors>
-                                            <contributor>GitHub</contributor>
-                                            <contributor>bot</contributor>
-                                        </contributors>
-                                    </hide>
-                                    <labelers>
-                                        <labeler>
-                                            <title>Bump</title>
-                                            <label>dependencies</label>
-                                        </labeler>
-                                    </labelers>
-                                    <categories>
-                                        <category>
-                                            <key>deps</key>
-                                            <title>Dependencies</title>
-                                            <labels>dependencies</labels>
-                                            <order>200</order>
-                                        </category>
-                                    </categories>
-                                    <hide>
-                                        <categories>merge</categories>
-                                    </hide>
-                                </changelog>
-                            </github>
-                        </release>
-                        <upload>
-                            <s3>
-                                <gluon>
-                                    <active>RELEASE</active>
-                                    <checksums>false</checksums>
-                                    <signatures>false</signatures>
-                                    <path>scenebuilder/{{artifactFile}}</path>
-                                </gluon>
-                            </s3>
-                        </upload>
-                        <distributions>
-                            <SceneBuilder>
-                                <type>NATIVE_PACKAGE</type>
-                                <brew>
-                                    <active>NEVER</active>
-                                </brew>
-                                <chocolatey>
-                                    <active>NEVER</active>
-                                    <remoteBuild>true</remoteBuild>
-                                </chocolatey>
-                                <macports>
-                                    <active>NEVER</active>
-                                </macports>
-                                <snap>
-                                    <active>NEVER</active>
-                                    <remoteBuild>true</remoteBuild>
-                                </snap>
-                                <artifacts>
-                                    <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-amd64.dmg</path>
-                                        <platform>osx-x86_64</platform>
-                                        <extraProperties>
-                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
-                                        </extraProperties>
-                                    </artifact>
-                                    <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}-aarch64.dmg</path>
-                                        <platform>osx-aarch64</platform>
-                                        <extraProperties>
-                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/mac/{{artifactFile}}</s3GluonPath>
-                                        </extraProperties>
-                                    </artifact>
-                                    <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.msi</path>
-                                        <platform>windows-x86_64</platform>
-                                        <extraProperties>
-                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/win/{{artifactFile}}</s3GluonPath>
-                                        </extraProperties>
-                                    </artifact>
-                                    <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.rpm</path>
-                                        <platform>linux-x86_64</platform>
-                                        <extraProperties>
-                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/linux/{{artifactFile}}</s3GluonPath>
-                                            <skipSnap>true</skipSnap>
-                                        </extraProperties>
-                                    </artifact>
-                                    <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.deb</path>
-                                        <platform>linux-x86_64</platform>
-                                        <extraProperties>
-                                            <s3GluonPath>scenebuilder/{{s3Path}}/install/linux/{{artifactFile}}</s3GluonPath>
-                                        </extraProperties>
-                                    </artifact>
-                                </artifacts>
-                            </SceneBuilder>
-                            <scenebuilder-kit>
-                                <type>SINGLE_JAR</type>
-                                <artifacts>
-                                    <artifact>
-                                        <path>{{artifactsDir}}/{{distributionName}}-{{projectVersion}}.jar</path>
-                                        <extraProperties>
-                                            <s3GluonPath>scenebuilder/{{s3Path}}/{{artifactFile}}</s3GluonPath>
-                                        </extraProperties>
-                                    </artifact>
-                                </artifacts>
-                            </scenebuilder-kit>
-                        </distributions>
-                        <files>
-                            <active>${jreleaser.files.active}</active>
-                            <artifacts>
-                                <artifact>
-                                    <path>target/settings.properties</path>
-                                </artifact>
-                                <artifact>
-                                    <path>target/version.json</path>
-                                </artifact>
-                                <artifact>
-                                    <path>target/version-8.4.0.json</path>
-                                </artifact>
-                            </artifacts>
-                        </files>
-                        <signing>
-                            <active>ALWAYS</active>
-                            <armored>true</armored>
-                        </signing>
-                        <deploy>
-                            <maven>
-                                <mavenCentral>
-                                    <maven-central>
-                                        <active>RELEASE</active>
-                                        <url>https://central.sonatype.com/api/v1/publisher</url>
-                                        <snapshotSupported>false</snapshotSupported>
-                                        <applyMavenCentralRules>true</applyMavenCentralRules>
-                                        <stagingRepositories>
-                                            <stagingRepository>target/staging-deploy</stagingRepository>
-                                        </stagingRepositories>
-                                    </maven-central>
-                                </mavenCentral>
-                                <nexus2>
-                                    <snapshot-deploy>
-                                        <active>SNAPSHOT</active>
-                                        <url>https://central.sonatype.com/api/v1/publisher</url>
-                                        <snapshotUrl>https://central.sonatype.com/repository/maven-snapshots/</snapshotUrl>
-                                        <snapshotSupported>true</snapshotSupported>
-                                        <applyMavenCentralRules>true</applyMavenCentralRules>
-                                        <closeRepository>true</closeRepository>
-                                        <releaseRepository>true</releaseRepository>
-                                        <stagingRepositories>target/staging-deploy</stagingRepositories>
-                                    </snapshot-deploy>
-                                </nexus2>
-                            </maven>
-                        </deploy>
-                    </jreleaser>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/SoKnight/scenebuilder</url>
+        </repository>
+    </distributionManagement>
 
     <organization>
         <name>Gluon</name>
